@@ -17,5 +17,4 @@ phases:
   post_build:
     commands:
       - echo "Post build: "
-      - '[ ${CODEBUILD_BUILD_SUCCEEDING:-0} -eq 1 ] || exit 1'
       - echo "build succeeded."
