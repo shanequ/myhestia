@@ -16,5 +16,6 @@ phases:
 
   post_build:
     commands:
-      - echo "build succeeded on `date`."
+      -- if [ $CODEBUILD_BUILD_SUCCEEDING = 1 ]; then echo Build completed; else echo Build failed ignoring deployment; fi
+      - echo "build completed on `date`."
 
