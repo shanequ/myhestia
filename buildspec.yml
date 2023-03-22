@@ -19,7 +19,8 @@ phases:
       - if [ $CODEBUILD_BUILD_SUCCEEDING = 1 ]; then echo Build completed; else echo Build failed ignoring manual approval; fi
       - echo "build completed on `date`."
 
-# the actual location of artifacts are defined in CodeBuild -> Artifact
+# If CodeBuild runs by itself, the actual location of output artifacts are defined in CodeBuild -> Artifact
+# If CodePipeline runs CodeBuild, the output artifacts are stored in the pipeline's S3 bucket. 
 artifacts:
   files:
     - "**/*"
