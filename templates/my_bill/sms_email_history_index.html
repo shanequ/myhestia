@@ -1,0 +1,196 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Matter List {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb 'SMS/Email History' %}
+{% endblock %}
+
+{% block content %}
+
+<h4 class="mt15">SMS/Email History</h4>
+
+<div class="jarviswidget plain-tab-panel mt20">
+    <header>
+        <ul class="nav nav-tabs pull-left in" id="tab-head">
+            <li class="active">
+                <a data-toggle="tab" href="#sms-tab"><span class="">SMS History</span></a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#email-tab"><span class="">Email History</span></a>
+            </li>
+        </ul>
+    </header>
+    <div class="widget-body">
+        <div id="myTabContent1" class="tab-content padding-10">
+            <div class="tab-pane active" id="sms-tab">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <form id='sms-search-form'>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                                    <div class="input-icon-right">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                        <input type="text" name="sms_start_date" class="form-control my-date-picker" placeholder="Start date. 01-01-2017" value="{{ date_start }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                                    <div class="input-icon-right">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                        <input type="text" name="sms_end_date" class="form-control my-date-picker" placeholder="End date. 31-01-2017" value="{{ date_end }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-2">
+                        <ul id="sparks" class="mt0">
+                            <li class="sparks-info">
+                                <h5>
+                                    TOTAL SMS Sent <span class="txt-color-blue text-right" id="total_sms"></span>
+                                </h5>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt10 table-responsive">
+                    <table class="table table-striped my-table" id="sms-table" width="100%"
+                           data-server-url="{% url 'bill_index_sms_table_list' %}">
+                        <thead>
+                            <tr class="">
+                                <th class="unsearchable">ID</th>
+                                <th class="">Sent At</th>
+                                <th class="unsearchable unsorted text-center"># of SMS</th>
+                                <th class="unsearchable unsorted">SMS Text</th>
+                                <th class="unsearchable unsorted">Target Numbers</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane" id="email-tab">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <form id='email-search-form'>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                                    <div class="input-icon-right">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                        <input type="text" name="email_start_date" class="form-control my-date-picker" placeholder="Start date. 01-01-2017" value="{{ date_start }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                                    <div class="input-icon-right">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                        <input type="text" name="email_end_date" class="form-control my-date-picker" placeholder="End date. 31-01-2017" value="{{ date_end }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-2">
+                        <ul id="sparks" class="mt0">
+                            <li class="sparks-info">
+                                <h5>
+                                    TOTAL Email Sent <span class="txt-color-greenDark text-right" id="total_email"></span>
+                                </h5>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="mt10 table-responsive">
+                    <table class="table table-striped my-table" id="email-table" width="100%"
+                           data-server-url="{% url 'bill_index_email_table_list' %}">
+                        <thead>
+                            <tr class="">
+                                <th class="unsearchable">ID</th>
+                                <th class="unsorted">Sent At</th>
+                                <th class="unsorted">Subject</th>
+                                <th class="unsearchable unsorted">To</th>
+                                <th class="unsearchable unsorted">CC</th>
+                                <th class="unsearchable unsorted text-center">Attachment</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+<script>
+
+$(function(){
+
+    var sms_form_id = 'sms-search-form';
+    var sms_table_id = '#sms-table';
+    JLib.init_data_table(sms_table_id, true, '', 0, true, sms_form_id, false, _refresh_sms_summary);
+
+    var sms_delay_timer = null;
+    $.each($('#'+sms_form_id).find('input'), function() {
+
+        var search_obj = $(this);
+        search_obj.bind('change', function(e) {
+
+            if (sms_delay_timer) {
+                window.clearTimeout(sms_delay_timer);
+            }
+            sms_delay_timer = window.setTimeout(function() {
+                $(sms_table_id).dataTable().fnFilter(search_obj.val());
+            }, 200);
+        });
+    });
+
+    var email_form_id = 'email-search-form';
+    var email_table_id = '#email-table';
+    JLib.init_data_table(email_table_id, true, '', 0, true, email_form_id, false, _refresh_email_summary);
+
+    var email_delay_timer = null;
+    $.each($('#'+email_form_id).find('input'), function() {
+
+        var search_obj = $(this);
+        search_obj.bind('change', function(e) {
+
+            if (email_delay_timer) {
+                window.clearTimeout(email_delay_timer);
+            }
+            email_delay_timer = window.setTimeout(function() {
+                $(email_table_id).dataTable().fnFilter(search_obj.val());
+            }, 200);
+        });
+    });
+
+});
+
+/**
+ * refresh sales commission summary
+ * @param dt_ret - return from datatable server
+ */
+function _refresh_sms_summary(dt_ret) {
+    // console.log(dt_ret);
+    var total_sms = dt_ret['callback_data']['total_sms'];
+    var total_sms_html = JLib.number_format(total_sms, 0);
+
+    $('#total_sms').text(total_sms_html);
+}
+function _refresh_email_summary(dt_ret) {
+    // console.log(dt_ret);
+    var total_email = dt_ret['callback_data']['total_email'];
+    var total_email_html = JLib.number_format(total_email, 0);
+
+    $('#total_email').text(total_email_html);
+}
+
+</script>
+
+{% endblock %}

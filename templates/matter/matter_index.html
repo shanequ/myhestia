@@ -1,0 +1,211 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Matter List {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb 'Matter List' %}
+{% endblock %}
+
+{% block content %}
+
+<h4 class="mt15">
+    Matter List
+    <span class="pull-right">
+        <a href="{% url 'matter_download_leap' %}" class="button button-flat-primary">
+            <i class="fa fa-cloud-download f11p" aria-hidden="true"></i> Download
+        </a>
+    </span>
+    {% if request|check_pv:'MATTER_CREATE'%}
+        <span class="pull-right">
+            <a href="{% url 'matter_create' %}" class="button button-flat-primary mr5">
+                <i class="fa fa-plus f11p" aria-hidden="true"></i> Create Matter
+            </a>
+        </span>
+        <span class="pull-right">
+            <a href="{% url 'matter_csv_upload' %}" class="button button-flat-royal mr5">
+                <i class="fa fa-plus f11p" aria-hidden="true"></i> Upload Matter CSV
+            </a>
+        </span>
+
+    {% endif %}
+</h4>
+
+
+<div class="jarviswidget plain-tab-panel mt20">
+    <header>
+        <ul class="nav nav-tabs pull-left in" id="tab-head">
+            <li class="active">
+                <a data-toggle="tab" href="#cm-tab"><span class="">Conveying Matters</span></a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#om-tab"><span class="">Other Matters</span></a>
+            </li>
+        </ul>
+    </header>
+    <div class="widget-body">
+        <div id="myTabContent1" class="tab-content padding-10">
+            <div class="tab-pane active" id="cm-tab">
+                <form id='cm-search-form'>
+                    <div class="row">
+                        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                            <div class="input-icon-right">
+                                <i class="glyphicon glyphicon-search"></i>
+                                <input type="text" name="search_num" id="search_num" class="form-control" placeholder="Matter Number">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                            <div class="input-icon-right">
+                                <i class="glyphicon glyphicon-search"></i>
+                                <input type="text" name="search_client" class="form-control" placeholder="Client First Name">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                            <select class="form-control" name="status" id="cm-status">
+                                <option value="">ALL Status</option>
+                                {% for key, value in MatterRecord.STATUS_CHOICE  %}
+                                    <option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt10 table-responsive">
+                    <table class="table table-striped my-table" id="cm-table" width="100%"
+                           data-server-url="{% url 'matter_conveying_table_list' %}">
+                        <thead>
+                            <tr class="">
+                                <th class="unsearchable">ID</th>
+                                <th class="">Matter Number</th>
+                                <th class="unsearchable unsorted">Type</th>
+                                <th class="unsearchable unsorted">Property Address</th>
+                                <th class="unsearchable unsorted">Client</th>
+                                <th class="unsearchable unsorted text-right">Stamp Duty Amount</th>
+                                <th class="unsearchable text-center">Exchange Date</th>
+                                <th class="unsearchable text-center">Stamp Duty Due</th>
+                                <th class="unsearchable text-center">Settlement Date</th>
+                                <th class="unsearchable unsorted">Memo</th>
+                                <th class="unsearchable unsorted">Admin</th>
+                                <th class="unsearchable unsorted">Status</th>
+                                <th class="unsearchable unsorted text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane" id="om-tab">
+                <form id='om-search-form'>
+                    <div class="row">
+                        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                            <div class="input-icon-right">
+                                <i class="glyphicon glyphicon-search"></i>
+                                <input type="text" name="search_num" class="form-control" placeholder="Matter Number">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                            <div class="input-icon-right">
+                                <i class="glyphicon glyphicon-search"></i>
+                                <input type="text" name="search_subject" class="form-control" placeholder="Subject">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                            <div class="input-icon-right">
+                                <i class="glyphicon glyphicon-search"></i>
+                                <input type="text" name="search_client" class="form-control" placeholder="Client First Name">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                            <select class="form-control" name="status" id="om-status">
+                                <option value="">ALL Status</option>
+                                {% for key, value in MatterRecord.STATUS_CHOICE  %}
+                                    <option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt10 table-responsive">
+                    <table class="table table-striped my-table" id="om-table" width="100%"
+                           data-server-url="{% url 'matter_other_table_list' %}">
+                        <thead>
+                            <tr class="">
+                                <th class="unsearchable">ID</th>
+                                <th class="unsorted">Matter Number</th>
+                                <th class="unsorted">Subject</th>
+                                <th class="unsearchable unsorted">Type</th>
+                                <th class="unsearchable unsorted">Client</th>
+                                <th class="unsearchable unsorted">Memo</th>
+                                <th class="unsearchable unsorted">Admin</th>
+                                <th class="unsearchable unsorted">Status</th>
+                                <th class="unsearchable unsorted text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+<script>
+
+$(function(){
+
+    JLib.keep_tab_status('tab-head', 'hestia_matter_index_tab');
+
+    var cm_form_id = 'cm-search-form';
+    JLib.init_data_table('#cm-table', true, 'search_num', 0, true, cm_form_id);
+
+    $('#cm-status').bind('change', function(e) {
+        // clear and redraw
+        $('#cm-table').dataTable().fnClearTable();
+    });
+
+    var delay_timer = null;
+    $.each($('#'+cm_form_id).find('input'), function() {
+
+        var search_obj = $(this);
+        search_obj.bind('keyup', function(e) {
+
+            if (delay_timer) {
+                window.clearTimeout(delay_timer);
+            }
+            delay_timer = window.setTimeout(function() {
+                $('#cm-table').dataTable().fnFilter(search_obj.val());
+            }, 200);
+        });
+    });
+
+    var om_form_id = 'om-search-form';
+    JLib.init_data_table('#om-table', true, '', 0, true, om_form_id);
+
+    $('#om-status').bind('change', function(e) {
+        $('#om-table').dataTable().fnClearTable();
+    });
+
+    $.each($('#'+om_form_id).find('input'), function() {
+        var search_obj = $(this);
+        search_obj.bind('keyup', function(e) {
+            if (delay_timer) {
+                window.clearTimeout(delay_timer);
+            }
+            delay_timer = window.setTimeout(function() {
+                $('#om-table').dataTable().fnFilter(search_obj.val());
+            }, 200);
+        });
+    });
+
+})
+</script>
+
+<script src="{{ STATIC_URL }}js/matter_action.js?version=1.0.1"></script>
+
+{% endblock %}

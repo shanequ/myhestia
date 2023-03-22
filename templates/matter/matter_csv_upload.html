@@ -1,0 +1,64 @@
+{% extends 'mainbase.html' %}
+{% load humanize %}
+
+{% block title %} Matter Detail {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Matter' 'matter_index' %}
+    {% breadcrumb 'Matter CSV Upload' %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="plain-panel">
+        <h4 class="">
+            Matter CSV Upload
+            <span class="pull-right">
+            </span>
+        </h4>
+        <hr class="dash mt15">
+
+    {% if errmsg %}
+        <div class="alert alert-danger fade in">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            {{ errmsg|safe }}
+        </div>
+    {% endif %}
+
+    {% if successmsg %}
+        <div class="alert alert-success fade in">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            {{ successmsg|safe }}
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-4">
+            <form enctype="multipart/form-data" action="#"   method="post">{% csrf_token %}
+                <div class="form-group">
+                    <!-- <label for="matter-csv-file">Matter CSV File</label> -->
+                    <input type="file"  name="csvfile" class="form-control" id="matter-csv-file">
+                </div>
+                <button type="submit" class="button button-flat-action">Upload</button>
+            </form>
+        </div>
+    </div>
+    </div>
+
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+
+})
+
+</script>
+
+
+{% endblock %}

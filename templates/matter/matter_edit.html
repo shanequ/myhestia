@@ -1,0 +1,316 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Edit Matter {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Matter' 'matter_index' %}
+    {% breadcrumb 'Edit Matter' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Edit Matter
+        <i class="pull-right f11p mt5"><span class="txt-color-red">* </span>compulsory fields</i>
+    </h4>
+    <hr class="dash mt5">
+
+    <form action="{% url 'matter_edit' matter_id=form.instance.pk %}?next={{ next }}" enctype="multipart/form-data" method="post" id='frm'>
+        {% csrf_token %}
+
+        <div class="form-group row">
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="matter_num">Matter Number</label>
+                <input type="text" name="matter_num" class="form-control"
+                       value="{{ form.matter_num.value | default:''}}"
+                       data-bv-stringlength="true" maxlength="64">
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for=""><span class="txt-color-red">* </span>Matter Type</label>
+                <select name="matter_type" id="matter-type" class="form-control" data-bv-notempty="true" disabled>
+                    {% for k, v in form.MatterRecord.TYPE_CHOICE %}
+                        <option value="{{ k }}"
+                                {% if form.matter_type.value == k %}selected{% endif %}
+                                data-target-id="{% if k == form.MatterRecord.TYPE_OTHER %}other-container{% else %}conveying-container{% endif %}">
+                            {{ v }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" name="matter_type" value="{{ form.matter_type.value }}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                <label for="project">Project</label>
+                <select name="project" class="select2">
+                    <option value=""></option>
+                    {% for project in form.project_choices %}
+                        <option value="{{ project.pk }}" {% if project.pk|safe == form.project.value %}selected{% endif %}>
+                            {{ project }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <label for="clients"><span class="txt-color-red">* </span>Clients</label>
+                <div class="input-group" id="client_container">
+                    <select multiple name="clients" class="select2" data-bv-notempty="true">
+                        {% for client in form.clients.field.choices.queryset %}
+                            <option value="{{ client.pk }}" {% if client.pk|safe in form.clients.value %} selected {% endif %}>
+                                {{ client }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="input-group-btn">
+                        <a href="{% url 'client_create_modal' %}" data-toggle="modal" data-target="#remote-modal"
+                           class="button button-flat-primary create-client-btn">
+                            +New
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <label for="matter_admin"><span class="txt-color-red">* </span>Assign to Staff</label>
+                <select name="matter_admin" class="select2" data-bv-notempty="true">
+                    <option value=""></option>
+                    {% for staff in form.matter_admins %}
+                        <option value="{{ staff.pk }}" {% if staff.pk|safe == form.matter_admin.value|safe %}selected{% endif %}>
+                            {{ staff }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div id="other-container">
+            <div class="form-group row">
+                <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                    <label for="subject"><span class="txt-color-red">* </span>Matter Subject</label>
+                    <input type="text" name="subject" class="form-control"
+                           value="{{ form.subject.value | default:''}}"
+                           data-bv-notempty="true"
+                           data-bv-stringlength="true" maxlength="255">
+                </div>
+            </div>
+        </div>
+        <div id="conveying-container">
+            <div class="form-group row">
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="stamp_duty_amount">Stamp Duty Amount</label>
+                    <div class="input-icon-right">
+                        <i class="fa">$</i>
+                        <input type="text" name="stamp_duty_amount" class="form-control mask-money"
+                               value="{{ form.stamp_duty_amount.value | default_if_none:'' }}">
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="stamp_duty_due_date">Stamp Duty Due Date</label>
+                    <div class="input-group">
+                        <input type="text" name="stamp_duty_due_date" class="form-control my-date-picker"
+                               value="{{ form.stamp_duty_due_date.value | default:''}}"
+                               data-bv-stringlength="true" maxlength="10">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="stamp_duty_paid_date">Stamp Duty Paid Date</label>
+                    <div class="input-group">
+                        <input type="text" name="stamp_duty_paid_date" class="form-control my-date-picker"
+                               value="{{ form.stamp_duty_paid_date.value | default:''}}"
+                               data-bv-stringlength="true" maxlength="10">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="contract_exchange_date">Contract Exchange Date</label>
+                    <div class="input-group">
+                        <input type="text" name="contract_exchange_date" class="form-control my-date-picker"
+                               value="{{ form.contract_exchange_date.value | default:''}}"
+                               data-bv-stringlength="true" maxlength="10">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="cooling_off_date">Cooling Off Date</label>
+                    <div class="input-group">
+                        <input type="text" name="cooling_off_date" class="form-control my-date-picker"
+                               value="{{ form.cooling_off_date.value | default:''}}"
+                               data-bv-stringlength="true" maxlength="10">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="settlement_date">Settlement Date</label>
+                    <div class="input-group">
+                        <input type="text" name="settlement_date" class="form-control my-date-picker"
+                               value="{{ form.settlement_date.value | default:''}}"
+                               data-bv-stringlength="true" maxlength="10">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="mt20">Property Address</h5>
+            <hr class="dash mt10">
+            <div class="form-group row">
+                <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                    <label for="property_street"><span class="txt-color-red">* </span>Street</label>
+                    <input type="text" name="property_street" class="form-control"
+                           value="{{ form.property_street.value | default:''}}"
+                           data-bv-notempty="true"
+                           data-bv-stringlength="true" maxlength="128">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="property_suburb"><span class="txt-color-red">* </span>Suburb</label>
+                    <input type="text" name="property_suburb" class="form-control"
+                           value="{{ form.property_suburb.value | default:''}}"
+                           data-bv-notempty="true"
+                           data-bv-stringlength="true" maxlength="64">
+                </div>
+
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="property_state"><span class="txt-color-red">* </span>State</label>
+                    <select name="property_state" class="form-control" data-bv-notempty="true">
+                        {% for k, v in form.CommonConst.AUS_STATE_CHOICE %}
+                            <option value="{{ k }}" {% if form.property_state.value == k %}selected{% endif %}>{{ v }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                    <label for="property_postcode"><span class="txt-color-red">* </span>Postcode</label>
+                    <input type="text" name="property_postcode" class="form-control"
+                           value="{{ form.property_postcode.value | default:'2000'}}"
+                           data-bv-notempty="true"
+                           data-bv-stringlength="true" maxlength="32">
+                </div>
+            </div>
+
+            <h5 class="mt20">Agent Contact</h5>
+            <hr class="dash mt10">
+            <div class="form-group row">
+                <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                    <div class="input-group">
+                        <select name="agent_contact" class="select2">
+                            <option value="">Select agent contact ...</option>
+                            {% for contact in form.agent_contact_choices %}
+                                <option value="{{ contact.pk }}" {% if contact.pk|safe == form.agent_contact.value|safe %} selected {% endif %}>
+                                    {{ contact }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="input-group-btn">
+                            <a href="{% url 'agent_contact_create_modal' %}" data-toggle="modal" data-target="#remote-modal"
+                               class="button button-flat-primary">
+                                +New
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="mt30">Solicitor/Conveyancer</h5>
+        <hr class="dash mt10">
+        <div class="form-group row">
+            <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                <label for="solicitor_name"><span class="txt-color-red">* </span>Solicitor Name</label>
+                <input type="text" name="solicitor_name" class="form-control"
+                       value="{{ form.solicitor_name.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="255">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="solicitor_email"><span class="txt-color-red">* </span>Solicitor Email</label>
+                <input type="text" name="solicitor_email" class="form-control"
+                       value="{{ form.solicitor_email.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-emailaddress="true"
+                       data-bv-emailaddress-message="* Please input valid email"
+                       data-bv-stringlength="true" maxlength="254">
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="solicitor_mobile"><span class="txt-color-red">* </span>Solicitor Mobile</label>
+                <input type="text" name="solicitor_mobile" class="form-control"
+                       value="{{ form.solicitor_mobile.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32"
+                       data-bv-regexp="true"
+                       data-bv-regexp-regexp='^[0-9]{8,}$'
+                       data-bv-regexp-message="Please input valid mobile">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="button button-flat-primary" type="submit">
+                        Update Matter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<!-- Dynamic Modal -->
+<div class="modal fade" id="remote-modal" tabindex="-1" role="dialog" aria-labelledby="remoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content"></div>
+    </div>
+</div><!-- /.modal -->
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    /**
+     * form validation
+     */
+    var frm = $('#frm');
+    frm.bootstrapValidator({
+        trigger: 'change keyup',
+        group: '.control-group'
+    });
+    
+    /**
+     * create modal and add to select2
+     */
+    JLib.init_modal_select2('#remote-modal', '');
+
+    /*
+    if ($('#conveying-container').is(":visible")) {
+        var msg =
+            "<ul>" +
+            "   <li>Stamp Duty Amount: "+$('input[name="stamp_duty_amount"]').val()+"</li>" +
+            "   <li>Stamp Duty Due Date: "+$('input[name="stamp_duty_due_date"]').val()+"</li>" +
+            "   <li>Contract Exchange Date: "+$('input[name="contract_exchange_date"]').val()+"</li>" +
+            "   <li>Settlement Date: "+$('input[name="settlement_date"]').val()+"</li>" +
+            "</ul>";
+        JLib.double_confirm_submit("button[type='submit']", frm, 'Update Matter', msg);
+    }*/
+
+})
+
+</script>
+
+<script src="{{ STATIC_URL }}js/matter_form.js?version=1.0.0"></script>
+
+{% endblock %}

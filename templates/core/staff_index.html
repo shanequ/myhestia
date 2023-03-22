@@ -1,0 +1,163 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Staff {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb 'Staff' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="jarviswidget plain-tab-panel mt10">
+    <header>
+        <ul class="nav nav-tabs pull-left in" id="tab-head">
+            <li class="active">
+                <a data-toggle="tab" href="#s1"><span class="">Staff List</span></a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#s2"><span class="text-info">Reporting Relationships</span></a>
+            </li>
+        </ul>
+    </header>
+
+    <div class="widget-body">
+        <div id="myTabContent1" class="tab-content padding-10">
+            <div class="tab-pane active" id="s1">
+                <div class="row">
+                    <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                        <div class="input-icon-right">
+                            <i class="glyphicon glyphicon-search"></i>
+                            <input type="text" id="search-input" name="search" class="form-control" placeholder="Name/Email">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+                        <select class="form-control" name="team" id="team">
+                            <option value="{% url 'staff_index' %}">ALL Teams</option>
+                            {% for team in teams  %}
+                                <option value="{% url 'staff_index' %}?team_id={{ team.pk }}"
+                                        {% if team_id|safe == team.pk|safe %}selected{% endif %}>{{ team.team_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-lg-8 col-md-6 col-sm-4">
+                        {% if request|check_pv:'STAFF_CREATE'%}
+                            <span class="pull-right mb5">
+                                <a href="{% url 'staff_create' %}" class="button button-flat-primary"><i class="fa fa-plus f11p" aria-hidden="true"></i> Create Staff</a>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mt10 table-responsive">
+                    <table class="table table-striped my-table" id="content-table" width="100%">
+                        <thead>
+                            <tr class="">
+                                <th class="unsearchable">ID</th>
+                                <th class="unsearchable unsorted">Username</th>
+                                <th class="unsorted">Name</th>
+                                <th class="unsorted">Email</th>
+                                <th class="unsearchable unsorted">Mobile</th>
+                                <th class="unsearchable unsorted">Personal Email</th>
+                                <th class="unsearchable unsorted">Team</th>
+                                <th class="unsearchable unsorted">Position</th>
+                                <th class="unsearchable unsorted">Status</th>
+                                <th class="unsearchable unsorted text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for staff in staff_list %}
+                            <tr>
+                                <td>{{ staff.pk }}</td>
+                                <td>
+                                    <a href="{% url 'staff_detail' user_id=staff.pk %}">
+                                        {{ staff.username }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span rel="tooltip" data-placement="bottom" data-html="true"
+                                          data-original-title="{{ staff.get_short_desc }}">
+                                        {{ staff.get_short_desc | truncatechars:25 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a rel="tooltip" data-placement="bottom" data-html="true"
+                                       data-original-title="{{ staff.email }}" href="mailto:{{ staff.email }}">
+                                        {{ staff.email | truncatechars:30 }}
+                                    </a>
+                                </td>
+                                <td>{{ staff.mobile|insert_space_mobile }}</td>
+                                <td>
+                                    <a rel="tooltip" data-placement="bottom" data-html="true"
+                                       data-original-title="{{ staff.personal_email }}"
+                                       href="mailto:{{ staff.personal_email }}">
+                                        {{ staff.personal_email | truncatechars:30 }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span rel="tooltip" data-placement="bottom" data-html="true"
+                                          data-original-title="{{ staff.team.team_name }}">
+                                        {{ staff.team.team_name | truncatechars:30 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span rel="tooltip" data-placement="bottom" data-html="true" class="txt-color-orangeDark"
+                                          data-original-title="{{ staff.get_active_position_desc }}">
+                                        {{ staff.get_active_position_desc | truncatechars:30 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="{% user_status_bg_class staff=staff %}">
+                                        {{ staff.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% staff_action_html staff=staff request=request %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane" id="s2">
+                <div class="row">
+                    <div class="col-sm-6"><h5>Active Staff Only</h5></div>
+                    {% if request|check_pv:'STAFF_CREATE'%}
+                        <div class="col-sm-6">
+                            <a href="{% url 'staff_create' %}" class="button button-flat-primary pull-right mb5"><i class="fa fa-plus f11p" aria-hidden="true"></i> Create Staff</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="tree ml20 mt5">
+                    {% make_staff_tree request %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+<script>
+
+$(function(){
+
+    var table_id = '#content-table';
+    JLib.init_data_table(table_id, true, 'search-input');
+    JLib.keep_tab_status('tab-head', 'staff_index_tab');
+
+    $('select[name="team"]').change(function() {
+        window.location = $(this).val();
+    });
+
+})
+</script>
+
+<script src="{{ STATIC_URL }}js/staff_action.js?version=1.0.0"></script>
+
+{% endblock %}

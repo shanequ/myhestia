@@ -1,0 +1,34 @@
+{% extends "plainbase.html" %}
+
+{% block title %} Page does not exist {{ block.super }} {% endblock %}
+
+{% block content %}
+    <div class="row">
+
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="text-center error-box">
+						<h1 class="error-text tada animated"><i class="fa fa-times-circle text-danger error-icon-shadow"></i> Error 403</h1>
+						<h2 class="font-xl"><strong>User Permission denied !</strong></h2>
+						<br />
+						<p class="lead semi-bold">
+							<strong>You are not allowed to view this page.</strong><br><br>
+							<small>
+								You do not have permission to view this page.
+							</small>
+						</p>
+						<ul class="error-search text-left font-md">
+
+				        </ul>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+{% endblock %}

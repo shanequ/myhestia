@@ -1,0 +1,110 @@
+{% extends 'mainbase.html' %}
+{% load humanize %}
+
+{% block title %} Agent Detail {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Agent Contact' 'agent_contact_index' %}
+    {% breadcrumb 'Agent Detail' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">Agent Detail</h4>
+    <hr class="dash mt10">
+
+    <div class="row detail-panel">
+        <div class="col-sm-12">
+            <dl class="dl-horizontal">
+                <dt>ID</dt>
+                <dd>{{ agent.pk }}</dd>
+                <dt>Agent Name</dt>
+                <dd>{{ agent.agent_name }}</dd>
+                <dt>Created At</dt>
+                <dd>
+                    {{ agent.created_at|date:"d/m/Y H:i" }}
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<div class="jarviswidget plain-tab-panel mt20">
+    <header>
+        <ul class="nav nav-tabs pull-left in" id="tab-head">
+            <li class="active">
+                <a data-toggle="tab" href="#contact"><span class="">Agent Contacts</span></a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#c-matter"><span class="">Agent Conveying Matters</span></a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#n"><span class="">Notifications</span></a>
+            </li>
+        </ul>
+    </header>
+
+    <div class="widget-body">
+        <div class="tab-content padding-10">
+            <div class="tab-pane active" id="contact">
+                <div class="table-responsive">
+                    <table class="table table-striped my-table" id="agent-contact-table">
+                        <thead>
+                            <tr>
+                                <th class="unsearchable unsorted">ID</th>
+                                <th class="unsearchable">Contact</th>
+                                <th class="unsearchable unsorted">Email</th>
+                                <th class="unsearchable unsorted">Mobile</th>
+                                <th class="unsearchable unsorted">Created At</th>
+                                <th class="unsearchable unsorted text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in agent.agent_contacts.all %}
+                                <tr>
+                                    <td>{{ c.pk }}</td>
+                                    <td>{{ c.contact_name }}</td>
+                                    <td>{{ c.contact_email }}</td>
+                                    <td>{{ c.contact_mobile }}</td>
+                                    <td>{{ c.created_at|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% agent_contact_action_html contact=c request=request %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane" id="c-matter">
+                {% include 'matter/_matter_table_conveying.html' with matters=agent.get_conveying_matters %}
+            </div>
+            <div class="tab-pane" id="n">
+                {% include 'matter/_matter_notification_table.html' with mns=agent.get_mns NConst=NConst %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    JLib.init_data_table('#agent-contact-table', true, '', 0);
+
+    JLib.init_data_table('#conveying-matter-table', true, '');
+    JLib.init_data_table('#mn-table', true, '', 1);
+})
+
+</script>
+<script src="{{ STATIC_URL }}js/matter_action.js?version=1.0.1"></script>
+<script src="{{ STATIC_URL }}js/agent_contact_action.js?version=1.0.0"></script>
+<script src="{{ STATIC_URL }}js/matter_notification_action.js?version=1.0.0"></script>
+
+{% endblock %}

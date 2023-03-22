@@ -1,0 +1,227 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Create Staff {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Staff' 'staff_index' %}
+    {% breadcrumb 'Create Staff' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Create Staff
+        <i class="pull-right f11p mt5"><span class="txt-color-red">* </span>compulsory fields</i>
+    </h4>
+    <hr class="dash mt10">
+
+    <form action="{% url 'staff_create' %}" enctype="multipart/form-data" method="post" id='frm'>
+        {% csrf_token %}
+
+        <div class="form-group row">
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="username"><span class="txt-color-red">* </span>
+                    Username
+                    <i class="note txt-color-blue ml5">as login account</i>
+                </label>
+                <input type="text" name="username" class="form-control"
+                       value="{{ form.username.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="30">
+
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="email"><span class="txt-color-red">* </span>Email</label>
+                <input type="text" name="email" class="form-control"
+                       value="{{ form.email.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-emailaddress="true"
+                       data-bv-emailaddress-message="* Please input valid email"
+                       data-bv-stringlength="true" maxlength="128">
+
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="password">Password</label>
+                <input type="password" name="password"
+                       class="form-control"
+                       data-bv-stringlength="true"
+                       data-bv-stringlength-min="5"
+                       data-bv-stringlength-message="* at least 5 characters">
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="confirm_password">Confirmed Password</label>
+                <input type="password" name="confirm_password"
+                       class="form-control"
+                       data-bv-identical="true"
+                       data-bv-identical-field="password"
+                       data-bv-identical-message="not same as password">
+            </div>
+        </div>
+
+        <h4 class="mt20">Basic Information</h4>
+        <hr class="dash mt10">
+        <div class="form-group row">
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="first_name"><span class="txt-color-red">* </span>First Name</label>
+                <input type="text" name="first_name" class="form-control"
+                       value="{{ form.first_name.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32">
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="last_name"><span class="txt-color-red">* </span>Last Name</label>
+                <input type="text" name="last_name" class="form-control"
+                       value="{{ form.last_name.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32">
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="en_nickname"><span class="txt-color-red">* </span>English Name</label>
+                <input type="text" name="en_nickname" class="form-control"
+                       value="{{ form.en_nickname.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="mobile"><span class="txt-color-red">* </span>Mobile</label>
+                <input type="text" name="mobile" class="form-control"
+                       value="{{ form.mobile.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32"
+                       data-bv-regexp="true"
+                       data-bv-regexp-regexp='^[0-9]{8,}$'
+                       data-bv-regexp-message="Please input valid mobile">
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="personal_email">Personal Email</label>
+                <input type="text" name="personal_email" class="form-control"
+                       value="{{ form.personal_email.value | default:''}}"
+                       data-bv-emailaddress="true"
+                       data-bv-emailaddress-message="* Please input valid email"
+                       data-bv-stringlength="true" maxlength="128">
+
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="gender">Gender</label>
+                <select type="text" name="gender" class="form-control">
+                    {% for k, v in form.CommonConst.GENDER_CHOICE %}
+                        <option value="{{ k }}" {% if form.gender.value == k %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="join_date">Join Date</label>
+                <div class="input-group">
+                    <input type="text" name="join_date" class="form-control my-date-picker"
+                           value="{{ form.join_date.value | default:''}}"
+                           data-bv-stringlength="true" maxlength="10">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="dob">Date of Birth</label>
+                <div class="input-group">
+                    <input type="text" name="dob" class="form-control my-date-picker"
+                           value="{{ form.dob.value | default:''}}"
+                           data-bv-stringlength="true" maxlength="10">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <h4>Team and Positions</h4>
+        <hr class="dash mt10">
+        <div class="form-group row">
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label for="team"><span class="txt-color-red">*</span> Team</label>
+                <select class="select2" name="team" data-bv-notempty="true" data-bv-notempty-message="* Please select a team">
+                    <option value=""></option>
+                    {% for team in form.staff_teams %}
+                        <option value="{{ team.id }}"
+                                {% if form.team.value|safe == team.id|safe %} selected {% endif %}>
+                            {{ team }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 control-group">
+                <label class="checkbox-inline mt30">
+                    <input type="checkbox" name='is_team_head' class="check-group" {% if form.is_team_head.value %}checked{% endif %}>
+                    Is Team Head
+                </label>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                <label for="line_manager">Line Manager</label>
+                <select name="line_manager" class="select2">
+                    <option value=""></option>
+                    {% for s in form.line_managers %}
+                        <option value="{{ s.pk }}" {% if s.pk|safe == form.line_manager.value|safe %}selected{% endif %}>
+                            {{ s }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                <label for="position_ids">Positions</label>
+                <select multiple name="position_ids" class="select2">
+                    {% for key, name in form.position_ids.field.choices %}
+                        <option value="{{ key }}" {% if key|safe in form.position_ids.value %} selected {% endif %}>
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <i class="text-primary f11p">
+                    * Responsibilities at work, multiple choice. Managing Director has all accesses. <br>
+                    * Staff without any position cannot login system.</i>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="button button-flat-primary" type="submit">
+                        Create Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+
+</div>
+
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    /**
+     * form validation
+     */
+    $('#frm').bootstrapValidator({
+        trigger: 'change keyup',
+        group: '.control-group'
+    });
+})
+
+</script>
+
+{% endblock %}

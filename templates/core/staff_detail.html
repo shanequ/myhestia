@@ -1,0 +1,101 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Staff Detail {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Staff' 'staff_index' %}
+    {% breadcrumb 'Staff Detail' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Staff Detail
+        <span class="pull-right">
+            {% staff_action_html staff=staff request=request html_type='btn' %}
+        </span>
+    </h4>
+    <hr class="dash mt15">
+
+    <div class="row detail-panel">
+        <div class="col-sm-6">
+            <dl class="dl-horizontal mb30">
+                <dt>ID</dt>
+                <dd>{{ staff.pk }}</dd>
+                <dt>Login Username</dt>
+                <dd>{{ staff.username }}</dd>
+                <dt>Name</dt>
+                <dd class="txt-color-green"><b>{{ staff.get_short_desc }}</b></dd>
+                <dt>Email</dt>
+                <dd>
+                    <a href="mailto:{{ staff.email }}">{{ staff.email }}</a>
+                </dd>
+                <dt>Mobile Phone</dt>
+                <dd>{{ staff.mobile|insert_space_mobile }}</dd>
+                <dt>Personal Email</dt>
+                <dd>
+                    <a href="mailto:{{ staff.personal_email }}">{{ staff.personal_email }}</a>
+                </dd>
+                <dt>Join Date</dt>
+                <dd>{{ staff.join_date | date:'d/m/Y' }}</dd>
+                <dt>Date of Birth</dt>
+                <dd>{{ staff.dob|date:'d/m/Y' }}</dd>
+                <dt>Gender</dt>
+                <dd>
+                    <span class="{% get_gender_class gender=staff.gender %}">
+                        {{ staff.get_gender_display }}
+                    </span>
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>Status</dt>
+                <dd>
+                    <span class="{% user_status_bg_class staff=staff %}">{{ staff.get_status_display }}</span>
+                </dd>
+                <dt>Team</dt>
+                <dd>{{ staff.team.team_name }}</dd>
+                <dt>Is Team Head</dt>
+                <dd>{{ staff.is_team_head | yesno:'Yes,No' }}</dd>
+                <dt>Line Manager</dt>
+                <dd>
+                    {% if staff.line_manager %}
+                        <a href="{% url 'staff_detail' user_id=staff.line_manager.pk %}"
+                           rel="tooltip" data-placement="bottom" data-html="true"
+                           data-original-title="{{ staff.line_manager.get_short_desc }}">
+                            {{ staff.line_manager.get_short_desc|truncatechars:20 }}
+                        </a>
+                    {% endif %}
+                </dd>
+                <dt>Staff Positions</dt>
+                <dd class="txt-color-green">
+                    {% for p in staff.get_active_positions %}
+                        {{ p.get_position_display }}
+                        {% if not forloop.last %} <br> {% endif %}
+                    {% endfor %}
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+
+})
+
+</script>
+    
+<script src="{{ STATIC_URL }}js/staff_action.js?version=1.0.0"></script>
+
+{% endblock %}

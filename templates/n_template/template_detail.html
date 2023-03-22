@@ -1,0 +1,77 @@
+{% extends 'mainbase.html' %}
+{% load humanize %}
+
+{% block title %} Template Detail {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Notification Template' 'n_template_index' %}
+    {% breadcrumb 'Template Detail' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Template Detail
+        <span class="pull-right">
+            {% n_template_action_html nt=nt request=request html_type='btn' %}
+        </span>
+    </h4>
+    <hr class="dash mt15">
+
+    <div class="row detail-panel">
+        <div class="col-sm-12">
+            <dl class="dl-horizontal">
+                <dt>ID</dt>
+                <dd>
+                    {{ nt.pk }}
+                    <span class="{% n_template_status_bg_class nt=nt %} ml5">
+                        {{ nt.get_status_display }}
+                    </span>
+                </dd>
+                <dt>Template Name</dt>
+                <dd class="txt-color-green"><b>{{ nt.template_name }}</b></dd>
+                <dt>Category</dt>
+                <dd>
+                    <span class="{% n_template_category_class nt=nt %}">
+                        {{ nt.get_category_display }}
+                    </span>
+                </dd>
+                <dt>Send Type</dt>
+                <dd class="{% send_type_class send_type=nt.send_type %}">{{ nt.get_send_type_display }}</dd>
+                <dt>Trigger</dt>
+                <dd>{{ nt.get_trigger_desc }}</dd>
+                <dt>Send To</dt>
+                <dd>{% n_template_send_to_html nt=nt %}</dd>
+
+                {% if nt.send_type == NConst.SEND_TYPE_EMAIL %}
+                    <dt>Subject</dt>
+                    <dd>{{ nt.subject }}</dd>
+                    <dt>Attachment</dt>
+                    <dd>{{ nt.get_attachment_desc }}</dd>
+                {% endif %}
+                <dt>Content</dt>
+                <dd>{{ nt.content|safe }}</dd>
+            </dl>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+
+})
+
+</script>
+
+<script src="{{ STATIC_URL }}js/n_template_action.js?version=1.0.0.0"></script>
+
+{% endblock %}

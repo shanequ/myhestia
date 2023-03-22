@@ -1,0 +1,73 @@
+
+
+    <div class="mt10 table-responsive">
+        <table class="table table-striped my-table" id="other-matter-table" width="100%">
+            <thead>
+                <tr class="">
+                    <th class="unsearchable">ID</th>
+                    <th class="unsorted">Matter Number</th>
+                    <th class="unsearchable unsorted">Subject</th>
+                    <th class="unsearchable unsorted">Type</th>
+                    <th class="unsearchable unsorted">Client</th>
+                    <th class="unsearchable unsorted">Status</th>
+                    <th class="unsearchable unsorted text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for matter in matters %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'matter_detail' matter_id=matter.pk %}">
+                                {{ matter.get_id_desc }}
+                            </a>
+                            {% with missed_docs=matter.get_missed_docs %}
+                                {% if missed_docs %}
+                                    <br>
+                                    <span rel="tooltip" data-placement="bottom" data-html="true"
+                                          data-original-title="Some notifications need attachments. Please upload document - <b>{% for d in missed_docs %}{{ d.get_type_name_display }}{% if not forloop.last %}, {% endif %}{% endfor %}</b>. Or the notification will not be sent out.">
+                                        <b class="txt-color-red">Docs Needed ...</b>
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>{{ matter.matter_num }}</td>
+                        <td>
+                            <span rel="tooltip" data-placement="bottom" data-html="true"
+                                  data-original-title="{{ matter.subject }}">
+                                {{ matter.subject|truncatechars:30 }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="{% matter_type_class matter=matter %}">
+                                {{ matter.get_matter_type_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if request|check_pv:'CLIENT_VIEW' %}
+                                {% for c in matter.clients.all %}
+                                    <a href="{% url 'client_detail' client_id=c.pk %}">
+                                        {{ c.get_short_desc }}
+                                        {% if not forloop.last %}<br>{% endif %}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                {% for c in matter.clients.all %}
+                                    {{ c.get_short_desc }}
+                                    {% if not forloop.last %}<br>{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="{% matter_status_bg_class matter=matter %}">
+                                {{ matter.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% matter_action_html matter=matter request=request %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>

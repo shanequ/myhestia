@@ -1,0 +1,161 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Send Project Notification {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Project' 'project_index' %}
+    {% breadcrumb 'Send Project Notification' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Send Project Notification
+        <i class="pull-right f11p mt5"><span class="txt-color-red">* </span>compulsory fields</i>
+    </h4>
+    <hr class="dash mt5">
+
+    <form action="{% url 'project_notification_create' project_id=form.project.pk %}?next={{ next }}" enctype="multipart/form-data" method="post" id='frm' class="form-horizontal">
+        {% csrf_token %}
+
+        <div class="form-group mt30">
+            <label class="col-md-2 control-label pt0">Project</label>
+            <div class="col-md-10">
+                {{ form.project.title }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label pt0"># Matters</label>
+            <div class="col-md-10">
+                {{ form.project.project_matters.count }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label pt0">Expected Send At</label>
+            <div class="col-md-10 text-primary">
+                Immediately
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label"><span class="txt-color-red">* </span>SMS / Email</label>
+            <div class="col-md-4">
+                <select name="send_type" class="form-control" id="send_type">
+                    {% for k, v in form.NConst.SEND_TYPE_CHOICE %}
+                        <option value="{{ k }}" data-target-id="{% if k == form.NConst.SEND_TYPE_EMAIL %}email-container{% else %}sms-container{% endif %}"
+                                {% if form.send_type.value == k %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label"><span class="txt-color-red">* </span>Send To</label>
+            <div class="col-sm-4 control-group">
+                <select multiple name="send_tos" class="select2" data-bv-notempty="true">
+                    {% for r in form.send_tos.field.choices.queryset %}
+                        <option value="{{ r.pk }}" selected>
+                            {{ r.receiver }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div id="email-container">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Attachments</label>
+                <div class="col-sm-4">
+                    <div id="drop_zone" class="dropzone mt10" data-url="{% url "upload" %}" data-token="{{ csrf_token }}">
+                        <div class="dz-message needsclick f16p">
+                            Drop files here or click to upload <br>
+                            <span class="needsclick text-primary f14p">Attachments</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label"><span class="txt-color-red">* </span>Subject</label>
+                <div class="col-md-4">
+                    <input type="text" name="subject" class="form-control"
+                           value="{{ form.subject.value | default:''}}"
+                           data-bv-notempty="true"
+                           data-bv-stringlength="true" maxlength="128">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label"><span class="txt-color-red">* </span>Content</label>
+                <div class="col-md-6">
+                    <textarea name='content' class="form-control my-summernote" placeholder="" rows="4" data-bv-notempty="true"
+                            >{% if form.content.value %}{{ form.content.value }}{% else %}<br><br>Regards<br>{% templatetag openvariable %}admin{% templatetag closevariable %}{% endif %}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="sms-container">
+            <div class="form-group">
+                <label class="col-md-2 control-label"><span class="txt-color-red">* </span>Content</label>
+                <div class="col-md-4">
+                    <textarea name='content' class="form-control" placeholder="" rows="4" data-bv-notempty="true" data-bv-stringlength="true" maxlength="1000"
+                            >{{ form.content.value | default:''}}</textarea>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label pt0">How to use variables</label>
+            <div class="col-md-10">
+                {% templatetag openvariable %}variable name{% templatetag closevariable %}
+                eg. {% templatetag openvariable %}admin{% templatetag closevariable %}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label pt0">Variable Names</label>
+            <div class="col-md-10">
+                {% make_template_variable_help %}
+            </div>
+        </div>
+
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="button button-flat-primary" type="submit">
+                        Send Notification
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    /**
+     * form validation
+     */
+    $('#frm').bootstrapValidator({
+        trigger: 'change keyup',
+        group: '.form-group'
+    });
+
+    JLib.init_drop_zone('drop_zone', 'frm', 'attachments', '');
+
+})
+
+</script>
+
+<script src="{{ STATIC_URL }}js/matter_notification_form.js?version=1.0.0"></script>
+
+{% endblock %}

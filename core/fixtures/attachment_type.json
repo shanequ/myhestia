@@ -1,0 +1,31 @@
+[
+
+    {
+        "model": "n_template.AttachmentType",
+        "pk": 1,
+        "fields" : {
+            "type_name": "Contract"
+        }
+    },
+    {
+        "model": "n_template.AttachmentType",
+        "pk": 2,
+        "fields" : {
+            "type_name": "Deed"
+        }
+    },
+    {
+        "model": "n_template.AttachmentType",
+        "pk": 3,
+        "fields" : {
+            "type_name": "Notice"
+        }
+    },
+    {
+        "model": "n_template.AttachmentType",
+        "pk": 4,
+        "fields" : {
+            "type_name": "Letter"
+        }
+    }
+]

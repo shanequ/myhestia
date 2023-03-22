@@ -1,0 +1,65 @@
+{% load humanize %}
+    <div class="row detail-panel">
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>ID</dt>
+                <dd>{{ matter.get_id_desc }}</dd>
+                <dt>Matter Number</dt>
+                <dd>{{ matter.matter_num }}</dd>
+                <dt>Project</dt>
+                <dd>
+                    {% if matter.project %}
+                        <a href="{% url 'project_detail' project_id=matter.project.pk %}">
+                            {{ matter.project.title }}
+                        </a>
+                    {% endif %}
+                </dd>
+                <dt>Subject</dt>
+                <dd>
+                    <b class="txt-color-greenDark">{{ matter.subject }}</b>
+                </dd>
+                <dt>Matter Type</dt>
+                <dd>
+                    <span class="{% matter_type_class matter=matter %}">
+                        {{ matter.get_matter_type_display }}
+                    </span>
+                </dd>
+                <dt>Clients</dt>
+                <dd class="txt-color-green">
+                    {% matter_client_html matter=matter request=request %}
+                </dd>
+                <dt>Memo</dt>
+                <dd>
+                    {{ matter.memo|linebreaks }}
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>Status</dt>
+                <dd>
+                    <span class="{% matter_status_bg_class matter=matter %}">
+                        {{ matter.get_status_display }}
+                    </span>
+                </dd>
+                <dt>Matter Close Date</dt>
+                <dd>{{ matter.matter_close_date|date:'d/m/Y' }}</dd>
+                <dt>Solicitor</dt>
+                <dd>
+                    {% if matter.solicitor_name %}
+                        {{ matter.solicitor_name }} <br>
+                        {{ matter.solicitor_email }}, {{ matter.solicitor_mobile }}
+                    {% endif %}
+                </dd>
+                <dt>Matter Admin</dt>
+                <dd>
+                    {{ matter.matter_admin.get_short_desc }}
+                </dd>
+                <dt>Created By</dt>
+                <dd>
+                    {{ matter.created_by.get_short_desc }}<br>
+                    {{ matter.created_at|date:'d/m/Y H:i:s' }}
+                </dd>
+            </dl>
+        </div>
+    </div>

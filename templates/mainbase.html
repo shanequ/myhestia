@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en-us" id="dashboard-page">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>
+            {% block title %} - {{ WEBSITE_BU_NAME }} {% endblock %}
+        </title>
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<!-- Basic Styles -->
+        {% include 'partials/_css.html' %}
+
+        {% block style %}{% endblock %}
+
+	</head>
+
+	<!--
+
+	TABLE OF CONTENTS.
+
+	Use search to find needed section.
+
+	===================================================================
+
+	|  01. #CSS Links                |  all CSS links and file paths  |
+	|  02. #FAVICONS                 |  Favicon links and file paths  |
+	|  03. #GOOGLE FONT              |  Google font link              |
+	|  04. #APP SCREEN / ICONS       |  app icons, screen backdrops   |
+	|  05. #BODY                     |  body tag                      |
+	|  06. #HEADER                   |  header tag                    |
+	|  07. #PROJECTS                 |  project lists                 |
+	|  08. #TOGGLE LAYOUT BUTTONS    |  layout buttons and actions    |
+	|  09. #MOBILE                   |  mobile view dropdown          |
+	|  10. #SEARCH                   |  search field                  |
+	|  11. #NAVIGATION               |  left panel & navigation       |
+	|  12. #RIGHT PANEL              |  right panel userlist          |
+	|  13. #MAIN PANEL               |  main panel                    |
+	|  14. #MAIN CONTENT             |  content holder                |
+	|  15. #PAGE FOOTER              |  page footer                   |
+	|  16. #SHORTCUT AREA            |  dropdown shortcuts area       |
+	|  17. #PLUGINS                  |  all scripts and plugins       |
+
+	===================================================================
+
+	-->
+
+	<!-- #BODY -->
+	<!-- Possible Classes
+
+		* 'smart-style-{SKIN}'
+		* 'smart-rtl'         - Switch theme mode to RTL
+		* 'menu-on-top'       - Switch to top navigation (no DOM change required)
+		* 'no-menu'			  - Hides the menu completely
+		* 'hidden-menu'       - Hides the main menu but still accessable by hovering over left edge
+		* 'fixed-header'      - Fixes the header
+		* 'fixed-navigation'  - Fixes the main menu
+		* 'fixed-ribbon'      - Fixes breadcrumb
+		* 'fixed-page-footer' - Fixes footer
+		* 'container'         - boxed layout mode (non-responsive: will not work with fixed-navigation & fixed-ribbon)
+	-->
+	<body class="minified fixed-header fixed-navigation">
+		<!-- HEADER -->
+        <header id="header">
+			<div id="logo-group">
+
+				<!-- PLACE YOUR LOGO HERE -->
+				<span id="logo"> <a href="{% url 'home' %}"><img src="{{ WEBSITE_LOGO_URL }}" alt="{{ WEBSITE_BU_NAME }}" style="max-height: 30px;"></a> </span>
+				<!-- END LOGO PLACEHOLDER -->
+
+			</div>
+
+			<!-- pulled right: nav area -->
+			<div class="pull-right">
+
+				<!-- collapse menu button -->
+				<div id="hide-menu" class="btn-header pull-right">
+					<span> <a href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
+				</div>
+				<!-- end collapse menu -->
+
+				<!-- logout button -->
+				<div id="logout" class="btn-header transparent pull-right">
+					<span>
+                        <a href="{% url 'logout' %}" title="Sign Out" data-action="userLogout" data-logout-msg="Are you sure to log out?">
+                            <i class="fa fa-sign-out"></i>
+                        </a>
+                    </span>
+				</div><!-- end logout button -->
+
+                <ul class="header-dropdown-list" style="">
+                    <li class="">
+                        <a aria-expanded="false" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span>Welcome, {{ request.user.english_name }}</span> <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="{% url 'my_profile_edit' %}">Profile</a></li>
+                            <li><a href="{% url 'staff_change_password' user_id=request.user.pk %}">Change Password</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div id="" class="btn-header pull-right mt15 mr10">
+                    {{ server_badge | safe }}
+                </div> <!-- test server warning -->
+
+			</div>
+			<!-- end pulled right: nav area -->
+
+		</header>
+		<!-- END HEADER -->
+
+		<!-- #NAVIGATION -->
+		<!-- Left panel : Navigation area -->
+		<!-- Note: This width of the aside area can be adjusted through LESS variables -->
+        {% include 'partials/_menu.html' %}
+		<!-- END NAVIGATION -->
+
+        <!-- MAIN PANEL -->
+        <div id="main" role="main" class="mb40">
+
+            {% block ribbon %}
+                <div id="ribbon">
+                    <!-- breadcrumb -->
+                    <ol class="breadcrumb">
+                        {% block breadcrumb %} {% endblock %}
+                    </ol><!-- end breadcrumb -->
+                </div>
+            {% endblock %}
+			<!-- END RIBBON -->
+
+			<!-- MAIN CONTENT -->
+			<div id="content" class="pt0">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-block {% get_message_class message %}">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="alert-heading">{{ message.tags|title }}!</h4>
+                            {{ message|safe }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if form.errors %}
+                    <div class="alert alert-block alert-danger">
+                        <a class="close" data-dismiss="alert" href="#">×</a>
+                        <h4 class="alert-heading"><i class="fa fa-times"></i> Error!</h4>
+                        <ul class="errorlist nonfield">
+                            {% for key in form.non_field_errors %}
+                                <li>{{ key|safe }}</li>
+                            {% endfor %}
+                        </ul>
+                        <ul class="errorlist">
+                            {% for key, value in form.errors.items %}
+                                {% if key != '__all__' %}
+                                    <li>{{ key }}</li>
+                                    <ul class="errorlist">
+                                        {% for e in value %}
+                                            <li>{{ e }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+			</div>
+			<!-- END MAIN CONTENT -->
+            {% block extra_content %} {% endblock %}
+
+       </div>
+
+		<!-- END MAIN PANEL -->
+
+		<!-- PAGE FOOTER -->
+        {% include 'partials/_footer.html' %}
+		<!-- END PAGE FOOTER -->
+
+		<!-- SHORTCUT AREA : With large tiles (activated via clicking user name tag)
+		Note: These tiles are completely responsive,
+		you can add as many as you like
+		-->
+
+		<!-- END SHORTCUT AREA -->
+
+		<!--================================================== -->
+        {% include 'partials/_js.html' %}
+
+		{% block jscript %}{% endblock %}
+
+	</body>
+
+</html>

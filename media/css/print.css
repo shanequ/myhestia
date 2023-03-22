@@ -1,0 +1,59 @@
+/**
+ * style sheet for print
+ */
+
+/**
+ * ==========================================
+ *  common
+ * ==========================================
+ */
+/**
+ * hidden
+ */
+#left-panel,#ribbon,#shortcut,#sparks,.page-title,.panel-heading,
+.demo,.page-footer,.widget-body-toolbar,header {
+    display:none!important;
+}
+
+a[href]:after {
+    content: none !important;
+}
+
+/* page break */
+table { page-break-inside:auto }
+tr    { page-break-inside:avoid; page-break-after:auto }
+thead { display:table-header-group }
+tfoot { display:table-footer-group }
+.print-in-page {
+    page-break-before: auto;
+    page-break-inside:avoid;
+    page-break-after:auto
+}
+/**
+ * ==========================================
+ *  page element
+ * ==========================================
+ */
+.menu-on-top #main {
+    margin-top: 10px !important;
+}
+/* all buttons */
+.button {
+    display:none!important;
+}
+
+/**
+ * panel
+ */
+.plain-panel {
+    border: none !important;
+    padding: 0 !important;
+}
+
+.jarviswidget > header, .jarviswidget > .widget-body {
+    border: none;
+}
+
+.detail-panel dt {
+    color: #CCCCCC !important;
+}

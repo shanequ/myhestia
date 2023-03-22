@@ -1,0 +1,176 @@
+{% load humanize %}
+
+<form id='report-commission-all-sales-search-form' enctype="multipart/form-data" method="get">
+    <div class="row">
+        <div class="col-sm-2 pr0">
+            <div class="input-icon-right">
+                <i class="fa fa-calendar"></i>
+                <input type="text" name="exchange_date_from" class="form-control my-date-picker"
+                       placeholder="Exchange Date From" value="{{ exchange_date_from|date:'d-m-Y' }}">
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="input-icon-right">
+                <i class="fa fa-calendar"></i>
+                <input type="text" name="exchange_date_to" class="form-control my-date-picker"
+                       placeholder="To" value="{{ exchange_date_to|date:'d-m-Y' }}">
+            </div>
+        </div>
+        <div class="col-sm-4 pr0">
+            <select name="project_id" class="select2">
+                <option value="">-- All Projects --</option>
+                {% for p in projects %}
+                    <option value="{{ p.pk }}" {% if project_id == p.pk %}selected{% endif %}>{{ p.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <button class="button button-flat-primary" type="submit">Search</button>
+        </div>
+    </div>
+</form>
+
+<div class="mt20 table-responsive">
+    <table class="table table-striped my-table" id="report-commission-all-sales-table" width="100%">
+        <thead>
+            <tr class="">
+                <th class="unsearchable">Sales</th>
+                <th class="unsearchable">Team</th>
+                <th class="unsearchable">Sales Partner</th>
+                <th class="unsearchable text-right">
+                    Paid SC Amount
+                    <i class="txt-color-white" rel="tooltip" data-placement="bottom"
+                       data-original-title="{% get_definition_html 'commission_report_paid_sc' %}">
+                        <i class="fa fa-question-circle"></i>
+                    </i>
+                </th>
+                <th class="unsearchable text-right">
+                    Pending SC Amount
+                    <i class="txt-color-white" rel="tooltip" data-placement="bottom"
+                       data-original-title="{% get_definition_html 'commission_report_pending_sc' %}">
+                        <i class="fa fa-question-circle"></i>
+                    </i>
+                </th>
+                <th class="unsearchable text-right">
+                    Forecast SC Amount
+                    <i class="txt-color-white" rel="tooltip" data-placement="bottom"
+                       data-original-title="{% get_definition_html 'commission_report_forecast_sc' %}">
+                        <i class="fa fa-question-circle"></i>
+                    </i>
+                </th>
+                <th class="unsearchable text-right">
+                    Paid TL Fee
+                    <i class="txt-color-white" rel="tooltip" data-placement="bottom"
+                       data-original-title="{% get_definition_html 'commission_report_paid_tlf' %}">
+                        <i class="fa fa-question-circle"></i>
+                    </i>
+                </th>
+                <th class="unsearchable text-right">
+                    Pending TL Fee
+                    <i class="txt-color-white" rel="tooltip" data-placement="bottom"
+                       data-original-title="{% get_definition_html 'commission_report_pending_tlf' %}">
+                        <i class="fa fa-question-circle"></i>
+                    </i>
+                </th>
+                <th class="unsearchable text-right">
+                    Forecast TL Fee
+                    <i class="txt-color-white" rel="tooltip" data-placement="bottom"
+                       data-original-title="{% get_definition_html 'commission_report_forecast_tlf' %}">
+                        <i class="fa fa-question-circle"></i>
+                    </i>
+                </th>
+                <th class="unsearchable text-right">Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sales_id, sales_dict in sales_stat.items %}
+                {% with team=sales_dict.sales.business_team %}
+                    <tr>
+                        <td>
+                            <span rel="tooltip" data-placement="bottom" data-html="true"
+                                  data-original-title="{{ sales_dict.sales.get_name_desc }}">
+                                {{ sales_dict.sales.get_name_desc|truncatechars:40 }}
+                            </span>
+                        </td>
+                        <td>
+                            <span rel="tooltip" data-placement="bottom" data-html="true"
+                                  data-original-title="{{ team.team_name }}">
+                                {{ team.team_name|truncatechars:30 }}
+                            </span>
+                        </td>
+                        <td>
+                            <span rel="tooltip" data-placement="bottom" data-html="true"
+                                  data-original-title="{{ team.get_sales_partner.get_name_desc }}">
+                                {{ team.get_sales_partner.get_name_desc|truncatechars:30 }}
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            ${{ sales_dict.paid_sc_amount|intcomma }}
+                        </td>
+                        <td class="text-right">
+                            ${{ sales_dict.pending_sc_amount|intcomma }}
+                        </td>
+                        <td class="text-right">
+                            ${{ sales_dict.forecast_sc_amount|intcomma }}
+                        </td>
+                        <td class="text-right">
+                            ${{ sales_dict.paid_tlf_amount|intcomma }}
+                        </td>
+                        <td class="text-right">
+                            ${{ sales_dict.pending_tlf_amount|intcomma }}
+                        </td>
+                        <td class="text-right">
+                            ${{ sales_dict.forecast_tlf_amount|intcomma }}
+                        </td>
+                        <td class="text-right">
+                            ${{ sales_dict.total_amount|intcomma }}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3"><b>Total</b></td>
+                <td class="text-right"><b class="txt-color-greenDark">${{ total_sc_paid|intcomma }}</b></td>
+                <td class="text-right"><b class="txt-color-orangeDark">${{ total_sc_pending|intcomma }}</b></td>
+                <td class="text-right"><b class="txt-color-purple">${{ total_sc_forecast|intcomma }}</b></td>
+                <td class="text-right"><b class="txt-color-greenDark">${{ total_tlf_paid|intcomma }}</b></td>
+                <td class="text-right"><b class="txt-color-orangeDark">${{ total_tlf_pending|intcomma }}</b></td>
+                <td class="text-right"><b class="txt-color-purple">${{ total_tlf_forecast|intcomma }}</b></td>
+                <td class="text-right"><b class="txt-color-blue">${{ total|intcomma }}</b></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+
+{% block jscript %}
+<script>
+
+$(function(){
+
+    $('select.select2').select2({ width: '100%' });
+    $(".my-date-picker").datepicker({
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        minView: 2,
+        viewSelect: 2
+    });
+
+    JLib.init_data_table('#report-commission-all-sales-table', true, '', 7);
+
+    /**
+     * update download btn url
+     */
+    var download_url = "{% url 'back_office_report_commission_mac_all_sales_download' %}";
+    var param = $('#report-commission-all-sales-search-form').serialize();
+    var action_url = download_url + '?' + param;
+    $("#commission-report-download-btn").attr('href', action_url)
+
+});
+
+</script>
+
+{% endblock %}

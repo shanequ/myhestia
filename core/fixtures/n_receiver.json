@@ -1,0 +1,31 @@
+[
+
+    {
+        "model": "n_template.NReceiver",
+        "pk": 1,
+        "fields" : {
+            "receiver": "Client"
+        }
+    },
+    {
+        "model": "n_template.NReceiver",
+        "pk": 2,
+        "fields" : {
+            "receiver": "Staff"
+        }
+    },
+    {
+        "model": "n_template.NReceiver",
+        "pk": 3,
+        "fields" : {
+            "receiver": "Agent"
+        }
+    },
+    {
+        "model": "n_template.NReceiver",
+        "pk": 4,
+        "fields" : {
+            "receiver": "Solicitor/Conveyancer"
+        }
+    }
+]

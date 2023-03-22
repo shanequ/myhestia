@@ -1,0 +1,108 @@
+{% extends 'mainbase.html' %}
+{% load humanize %}
+
+{% block title %} Matter Notification Detail {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Matter Notification' 'matter_notification_index' %}
+    {% breadcrumb 'Matter Notification Detail' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Matter Notification Detail
+        <span class="pull-right">
+            {% mn_action_html mn=mn request=request html_type='btn' %}
+        </span>
+    </h4>
+    <hr class="dash mt15">
+
+    <div class="row detail-panel">
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>ID</dt>
+                <dd>{{ mn.pk }}</dd>
+                <dt>Matter</dt>
+                <dd>
+                    <a href="{% url 'matter_detail' matter_id=mn.matter.pk %}">
+                        {{ mn.matter.get_id_desc }}
+                    </a>
+                </dd>
+                <dt>Status</dt>
+                <dd>
+                    <span class="{% mn_status_bg_class mn=mn %}">
+                        {{ mn.get_status_display }}
+                    </span>
+                </dd>
+                <dt>Expect Sent At</dt>
+                <dd>{{ mn.expect_sent_at|date:"d/m/Y H:i" }}</dd>
+                <dt>Added manually</dt>
+                <dd>{{ mn.is_manual|yesno:"Manually,System Automatically" }}</dd>
+                <dt>Sent Type</dt>
+                <dd class="{% send_type_class send_type=mn.send_type %}">{{ mn.get_send_type_display }}</dd>
+                <dt>Trigger</dt>
+                <dd>{{ mn.get_trigger_desc }}</dd>
+                <dt>Send To</dt>
+                <dd>{{ mn.get_send_to_display }}</dd>
+                <dt>CC Agent</dt>
+                <dd>{{ mn.cc_agent|yesno:'Yes,No' }}</dd>
+                <dt>CC Staff</dt>
+                <dd>{{ mn.cc_staff|yesno:'Yes,No' }}</dd>
+                <dt>Subject</dt>
+                <dd>{{ mn.subject }}</dd>
+                <dt>Content</dt>
+                <dd>{{ mn.content | safe }}</dd>
+                <dt>Attachment</dt>
+                <dd>{{ mn.get_attachment_type_display }}</dd>
+                <dt>Sent At</dt>
+                <dd>{{ mn.sent_at|date:"d/m/Y H:i" }}</dd>
+            </dl>
+        </div>
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>Template</dt>
+                <dd>
+                    <a href="{% url 'n_template_detail' template_id=mn.template.pk %}">
+                        {{ mn.template.template_name }}
+                    </a>
+                </dd>
+                <dt>Template Type</dt>
+                <dd>{{ mn.get_category_display }}</dd>
+                <dt>Created By</dt>
+                <dd>
+                    {{ mn.created_by.get_short_desc }} <br>
+                    {{ mn.created_at|date:"d/m/Y H:i:s" }}
+                </dd>
+                <dt>Updated By</dt>
+                <dd>
+                    {% if mn.updated_by %}
+                        {{ mn.updated_by.get_short_desc }} <br>
+                        {{ mn.updated_at|date:"d/m/Y H:i:s" }}
+                    {% endif %}
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+
+})
+
+</script>
+
+<script src="{{ STATIC_URL }}js/matter_notification_action.js?version=1.0.0.0"></script>
+
+{% endblock %}

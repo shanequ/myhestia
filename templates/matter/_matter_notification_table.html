@@ -1,0 +1,77 @@
+
+
+    <div class="mt10 table-responsive">
+        <table class="table table-striped my-table" id="mn-table">
+            <thead>
+                <tr>
+                    <th class="unsearchable unsorted">ID</th>
+                    <th class="unsearchable">Expected Sent At</th>
+                    <th class="unsearchable unsorted">Matter ID</th>
+                    <th class="unsearchable unsorted">Trigger</th>
+                    <th class="unsearchable unsorted text-center">Send Type</th>
+                    <th class="unsearchable unsorted">Subject/Content</th>
+                    <th class="unsearchable unsorted">Sent To</th>
+                    <th class="unsearchable unsorted">Attachment</th>
+                    <th class="unsorted">Sent At</th>
+                    <th class="unsorted">Created At</th>
+                    <th class="unsorted">Status</th>
+                    <th class="unsorted text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mn in mns %}
+                    <tr>
+                        <td>
+                            {{ mn.get_id_desc }}
+                            {% with missed_docs=mn.get_missed_docs %}
+                                {% if missed_docs %}
+                                    <br>
+                                    <span rel="tooltip" data-placement="bottom" data-html="true"
+                                          data-original-title="This notification needs attachments. Please upload matter document - <b>{% for d in missed_docs %}{{ d.get_type_name_display }}{% if not forloop.last %}, {% endif %}{% endfor %}</b>">
+                                        <b class="txt-color-red">Docs Needed ...</b>
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>{{ mn.expect_sent_at|date:"Y/m/d H:i" }}</td>
+                        <td>
+                            <a href="{% url 'matter_detail' matter_id=mn.matter.pk %}">{{ mn.matter.get_id_desc }}</a>
+                        </td>
+                        <td>{{ mn.get_trigger_desc }}</td>
+                        <td class="text-center {% send_type_class send_type=mn.send_type %}">
+                            {{ mn.get_send_type_display }}
+                        </td>
+                        <td>
+                            {% if mn.send_type == NConst.SEND_TYPE_EMAIL %}
+                                <span rel="tooltip" data-placement="bottom" data-html="true"
+                                      data-original-title="Subject: {{ mn.subject }}">
+                                    {{ mn.subject|truncatechars:30 }}
+                                </span>
+
+                            {% elif mn.send_type == NConst.SEND_TYPE_SMS %}
+                                <span rel="tooltip" data-placement="bottom" data-html="true"
+                                      data-original-title="Content: {{ mn.content }}">
+                                    {{ mn.content|truncatechars:30 }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>{% mn_send_to_html mn=mn %}</td>
+                        <td class="">
+                            {% make_mn_attachment_html mn=mn trim_chars=30 %}
+                        </td>
+
+                        <td>{{ mn.sent_at|date:"d/m/Y H:i" }}</td>
+                        <td>{{ mn.created_at|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <span class="{% mn_status_bg_class mn=mn %}">
+                                {{ mn.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% mn_action_html mn=mn request=request %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>

@@ -1,0 +1,84 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Client {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb 'Client' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Client
+        {% if request|check_pv:'CLIENT_CREATE'%}
+            <span class="pull-right">
+                <a href="{% url 'client_create' %}" class="button button-flat-primary">
+                    <i class="fa fa-plus f11p" aria-hidden="true"></i> Create Client
+                </a>
+            </span>
+        {% endif %}
+    </h4>
+    <hr class="dash mt15">
+
+    <div class="row">
+        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+            <div class="input-icon-right">
+                <i class="glyphicon glyphicon-search"></i>
+                <input type="text" id="client-search-input" name="search" class="form-control" placeholder="Client English/First Name">
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+            <select class="form-control" name="status" id="status">
+                <option value="{% url 'client_index' %}">ALL Status</option>
+                {% for key, value in Client.STATUS_CHOICE  %}
+                    <option value="{% url 'client_index' %}?status={{ key }}"
+                            {% if status == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="mt10 table-responsive">
+        <table class="table table-striped my-table" id="client-table" width="100%"
+               data-server-url="{% url 'client_table_list' %}?status={{ status }}">
+            <thead>
+                <tr class="">
+                    <th class="unsearchable">ID</th>
+                    <th class="unsorted">Name</th>
+                    <th class="unsearchable unsorted">Email</th>
+                    <th class="unsearchable unsorted">Mobile</th>
+                    <th class="unsearchable unsorted">Date of Birth</th>
+                    <th class="unsearchable unsorted text-center">Gender</th>
+                    <th class="unsearchable unsorted">Memo</th>
+                    <th class="unsearchable unsorted">Status</th>
+                    <th class="unsearchable unsorted text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+<script>
+
+$(function(){
+
+    JLib.init_data_table('#client-table', true, 'client-search-input');
+
+    $('select[name="status"]').change(function() {
+        window.location = $(this).val();
+    });
+
+})
+</script>
+
+<script src="{{ STATIC_URL }}js/client_action.js?version=1.0.0.0"></script>
+
+{% endblock %}

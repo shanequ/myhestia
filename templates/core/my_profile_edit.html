@@ -1,0 +1,129 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Edit Staff {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb 'Edit Profile' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Edit Profile
+        <i class="pull-right f11p mt5"><span class="txt-color-red">* </span>compulsory fields</i>
+    </h4>
+    <hr class="dash mt10">
+
+    <form action="{% url 'my_profile_edit' %}" enctype="multipart/form-data" method="post" id='frm'>
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="col-sm-3 control-group">
+                <label for="username"><span class="txt-color-red">* </span>
+                    Username <i class="note txt-color-blue ml5">as login account</i>
+                </label>
+                <input type="text" name="username" class="form-control" readonly
+                       value="{{ form.instance.username | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="30">
+
+            </div>
+            <div class="col-sm-3 control-group">
+                <label for="email"><span class="txt-color-red">* </span>Email</label>
+                <input type="text" name="email" class="form-control" readonly
+                       value="{{ form.instance.email | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-emailaddress="true"
+                       data-bv-emailaddress-message="* Please input valid email"
+                       data-bv-stringlength="true" maxlength="128">
+
+            </div>
+        </div>
+
+        <h4 class="mt30">Basic Information</h4>
+        <hr class="dash mt10">
+        <div class="form-group row">
+            <div class="col-sm-2 control-group">
+                <label for="first_name"><span class="txt-color-red">* </span>First Name</label>
+                <input type="text" name="first_name" class="form-control" readonly
+                       value="{{ form.instance.first_name | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32">
+            </div>
+            <div class="col-sm-2 control-group">
+                <label for="last_name"><span class="txt-color-red">* </span>Last Name</label>
+                <input type="text" name="last_name" class="form-control" readonly
+                       value="{{ form.instance.last_name | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32">
+            </div>
+            <div class="col-sm-2 control-group">
+                <label for="en_nickname"><span class="txt-color-red">* </span>English Name</label>
+                <input type="text" name="en_nickname" class="form-control"
+                       value="{{ form.en_nickname.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-3 control-group">
+                <label for="mobile"><span class="txt-color-red">* </span>Mobile</label>
+                <input type="text" name="mobile" class="form-control"
+                       value="{{ form.mobile.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="32"
+                       data-bv-regexp="true"
+                       data-bv-regexp-regexp='^[0-9]{8,}$'
+                       data-bv-regexp-message="Please input valid phone number">
+            </div>
+            <div class="col-sm-3 control-group">
+                <label for="personal_email"><span class="txt-color-red">* </span>Personal Email</label>
+                <input type="text" name="personal_email" class="form-control"
+                       value="{{ form.personal_email.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-emailaddress="true"
+                       data-bv-emailaddress-message="* Please input valid email"
+                       data-bv-stringlength="true" maxlength="128">
+
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="button button-flat-primary" type="submit">
+                        Update Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+
+</div>
+
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    /**
+     * form validation
+     */
+    $('#frm').bootstrapValidator({
+        trigger: 'change keyup',
+        group: '.control-group'
+    });
+
+})
+
+</script>
+
+
+{% endblock %}

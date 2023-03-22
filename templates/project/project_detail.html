@@ -1,0 +1,81 @@
+{% extends 'mainbase.html' %}
+{% load humanize %}
+
+{% block title %} Project Detail {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Project' 'project_index' %}
+    {% breadcrumb 'Project Detail' %}
+{% endblock %}
+
+{% block content %}
+
+
+<h4 class="mt20">
+    Project Detail - {{ project }}
+    <span class="pull-right">
+        {% project_action_html project=project request=request html_type='btn' %}
+    </span>
+</h4>
+
+<div class="jarviswidget plain-tab-panel mt30">
+    <header>
+        <ul class="nav nav-tabs pull-left in" id="tab-head">
+            <li class="active">
+                <a data-toggle="tab" href="#c-matter">
+                    Conveying Matters
+                    <sup class="tab-badge">{{ conveying_matters|length }}</sup>
+                </a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#o-matter">
+                    Other Matters
+                    <sup class="tab-badge">{{ other_matters|length }}</sup>
+                </a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#mn">
+                    Matter Notifications
+                    <sup class="tab-badge">{{ mns|length }}</sup>
+                </a>
+            </li>
+        </ul>
+    </header>
+
+    <div class="widget-body">
+        <div class="tab-content padding-10">
+            <div class="tab-pane active" id="c-matter">
+                {% include 'matter/_matter_table_conveying.html' with matters=conveying_matters %}
+            </div>
+            <div class="tab-pane" id="o-matter">
+                {% include 'matter/_matter_table_other.html' with matters=other_matters %}
+            </div>
+            <div class="tab-pane" id="mn">
+                {% include 'matter/_matter_notification_table.html' with mns=mns NConst=NConst %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    JLib.init_data_table('#conveying-matter-table', true, '');
+    JLib.init_data_table('#other-matter-table', true, '');
+
+    JLib.init_data_table('#mn-table', true, '', 1);
+})
+
+</script>
+
+<script src="{{ STATIC_URL }}js/project_action.js?version=1.0.1"></script>
+<script src="{{ STATIC_URL }}js/matter_action.js?version=1.0.1"></script>
+<script src="{{ STATIC_URL }}js/matter_notification_action.js?version=1.0.0"></script>
+
+{% endblock %}

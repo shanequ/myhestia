@@ -1,0 +1,186 @@
+[
+
+    {
+        "model": "n_template.NTemplate",
+        "pk": 1,
+        "fields" : {
+            "template_name": "Purchase OffPlan / On The Day / Exchange / To Client / Email",
+            "send_type": "EM",
+            "category": "MPO",
+            "trigger": "EXC",
+            "trigger_days": "0",
+            "subject": "",
+            "send_tos": [1],
+            "cc_tos": [3,4],
+            "attachments": [1],
+            "content": "{% extends 'emailbase.html' %}{% block title %}{{ block.super }}{% endblock %}{% block content %}{% endblock %}"
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 2,
+        "fields" : {
+            "template_name": "Purchase OffPlan / On The Day / Exchange / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPO",
+            "trigger": "EXC",
+            "trigger_days": "0",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 3,
+        "fields" : {
+            "template_name": "Purchase OffPlan / 60 Days / Stamp Duty / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPO",
+            "trigger": "SDD",
+            "trigger_days": "-60",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 4,
+        "fields" : {
+            "template_name": "Purchase OffPlan / 30 Days / Stamp Duty / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPO",
+            "trigger": "SDD",
+            "trigger_days": "-30",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1,2],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 5,
+        "fields" : {
+            "template_name": "Purchase OffPlan / 10 Days / Stamp Duty / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPO",
+            "trigger": "SDD",
+            "trigger_days": "-10",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1,2,3,4],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 6,
+        "fields" : {
+            "template_name": "Purchase OffPlan / On The Day / Stamp Duty / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPO",
+            "trigger": "SDD",
+            "trigger_days": "0",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1,3,4],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 7,
+        "fields" : {
+            "template_name": "Purchase OffPlan / 7 Days / Settlement / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPO",
+            "trigger": "SET",
+            "trigger_days": "-7",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 8,
+        "fields" : {
+            "template_name": "Purchase Existing / On The Day / Exchange / To Client / Email",
+            "send_type": "EM",
+            "category": "MPE",
+            "trigger": "EXC",
+            "trigger_days": "0",
+            "subject": "",
+            "send_tos": [1],
+            "cc_tos": [3,4],
+            "attachments": [1],
+            "content": "{% extends 'emailbase.html' %}{% block title %}{{ block.super }}{% endblock %}{% block content %}{% endblock %}"
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 9,
+        "fields" : {
+            "template_name": "Purchase Existing / On The Day / Exchange / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPE",
+            "trigger": "EXC",
+            "trigger_days": "0",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 10,
+        "fields" : {
+            "template_name": "Purchase Existing / 21 Days / Settlement / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPE",
+            "trigger": "SET",
+            "trigger_days": "-21",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 11,
+        "fields" : {
+            "template_name": "Purchase Existing / 7 Days / Settlement / To Client / SMS",
+            "send_type": "SMS",
+            "category": "MPE",
+            "trigger": "SET",
+            "trigger_days": "-7",
+            "subject": "",
+            "content": "test",
+            "send_tos": [1],
+            "cc_tos": []
+        }
+    },
+    {
+        "model": "n_template.NTemplate",
+        "pk": 12,
+        "fields" : {
+            "template_name": "Sell Existing / On The Day / Exchange / To Client / Email",
+            "send_type": "EM",
+            "category": "MSE",
+            "trigger": "EXC",
+            "trigger_days": "0",
+            "subject": "",
+            "send_tos": [1],
+            "cc_tos": [3,4],
+            "attachments": [1],
+            "content": "{% extends 'emailbase.html' %}{% block title %}{{ block.super }}{% endblock %}{% block content %}{% endblock %}"
+        }
+    }
+]

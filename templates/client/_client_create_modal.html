@@ -1,0 +1,111 @@
+
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Create Client</h4>
+            </div>
+
+
+            <form action="{% url 'client_create_modal' %}"
+                  enctype="multipart/form-data" method="post" id='client-create-frm'>
+                {% csrf_token %}
+
+                <div class="modal-body">
+
+                    <div class="form-group row">
+                        <div class="col-sm-3 control-group">
+                            <label for="first_name"><span class="txt-color-red">* </span>First Name <i class="f11p ml5 text-primary">(legal name)</i></label>
+                            <input type="text" name="first_name" class="form-control"
+                                   value="{{ form.first_name.value | default:''}}"
+                                   data-bv-notempty="true"
+                                   data-bv-stringlength="true" maxlength="128">
+                        </div>
+                        <div class="col-sm-3 control-group">
+                            <label for="middle_name">Middle Name <i class="f11p ml5 text-primary">(legal name)</i></label>
+                            <input type="text" name="middle_name" class="form-control"
+                                   value="{{ form.middle_name.value | default:''}}"
+                                   data-bv-stringlength="true" maxlength="128">
+                        </div>
+                        <div class="col-sm-3 control-group">
+                            <label for="last_name"><span class="txt-color-red">* </span>Last Name <i class="f11p ml5 text-primary">(legal name)</i></label>
+                            <input type="text" name="last_name" class="form-control"
+                                   value="{{ form.last_name.value | default:''}}"
+                                   data-bv-notempty="true"
+                                   data-bv-stringlength="true" maxlength="128">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-3 control-group">
+                            <label for="en_nickname">English Name</label>
+                            <input type="text" name="en_nickname" class="form-control"
+                                   value="{{ form.en_nickname.value | default:''}}"
+                                   data-bv-stringlength="true" maxlength="32">
+                        </div>
+                        <div class="col-sm-3 control-group">
+                            <label for="email"><span class="txt-color-red">* </span>Email</label>
+                            <input type="text" name="email" class="form-control"
+                                   value="{{ form.email.value | default:''}}"
+                                   data-bv-notempty="true"
+                                   data-bv-emailaddress="true"
+                                   data-bv-emailaddress-message="* Please input valid email"
+                                   data-bv-stringlength="true" maxlength="255">
+                        </div>
+                        <div class="col-sm-3 control-group">
+                            <label for="mobile"><span class="txt-color-red">* </span>Mobile</label>
+                            <input type="text" name="mobile" class="form-control"
+                                   value="{{ form.mobile.value | default:''}}"
+                                   data-bv-notempty="true"
+                                   data-bv-stringlength="true" maxlength="32"
+                                   data-bv-regexp="true"
+                                   data-bv-regexp-regexp='^[0-9]{8,}$'
+                                   data-bv-regexp-message="Please input valid mobile phone">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-3 control-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="text" name="dob" class="form-control my-date-picker"
+                                   value="{{ form.dob.value | default:''}}"
+                                   data-bv-stringlength="true" maxlength="10">
+                        </div>
+                        <div class="col-sm-3 control-group">
+                            <label for="gender">Gender</label>
+                            <select type="text" name="gender" class="form-control">
+                                {% for k, v in form.CommonConst.GENDER_CHOICE %}
+                                    <option value="{{ k }}" {% if form.gender.value == k %}selected{% endif %}>{{ v }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button button-flat" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="submit" class="button button-flat-primary" id="client-submit-btn"
+                            data-ok-msg="Client is added">
+                        Create Client
+                    </button>
+                </div>
+            </form>
+
+
+<script>
+
+$(function(){
+
+    pageSetUp();
+
+    $(".my-date-picker").datepicker({
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        minView: 2,
+        viewSelect: 2
+    });
+
+})
+
+</script>

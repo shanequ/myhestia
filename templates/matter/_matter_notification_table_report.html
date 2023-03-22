@@ -1,0 +1,88 @@
+{% load humanize %}
+
+    <div class="mt10 table-responsive">
+        <table class="table table-striped my-table" id="mn-table-report">
+            <thead>
+                <tr>
+                    <th class="unsearchable unsorted">ID</th>
+                    <th class="unsearchable">Expected Sent At</th>
+                    <th class="unsearchable unsorted">Trigger</th>
+                    <th class="unsearchable unsorted">Matter ID</th>
+                    <th class="unsearchable unsorted">Matter Type</th>
+                    <th class="unsearchable unsorted">Property</th>
+                    <th class="unsearchable unsorted">Client</th>
+                    <th class="unsearchable text-center">Stamp Duty Due</th>
+                    <th class="unsearchable unsorted text-right">Stamp Duty Amount</th>
+                    <th class="unsearchable unsorted text-center">Send Type</th>
+                    <th class="unsearchable unsorted">Sent To</th>
+                    <th class="unsorted">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mn in mns %}
+                    <tr>
+                        <td>
+                            {{ mn.get_id_desc }}
+                            {% with missed_docs=mn.get_missed_docs %}
+                                {% if missed_docs %}
+                                    <br>
+                                    <span rel="tooltip" data-placement="bottom" data-html="true"
+                                          data-original-title="This notification needs attachments. Please upload matter document. <b>{{ missed_docs|join:", " }}</b>">
+                                        <b class="txt-color-red">Docs Needed ...</b>
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>{{ mn.expect_sent_at|date:"Y/m/d H:i" }}</td>
+                        <td>{{ mn.get_trigger_desc }}</td>
+                        <td>
+                            <a href="{% url 'matter_detail' matter_id=mn.matter.pk %}">{{ mn.matter.get_id_desc }}</a>
+                        </td>
+                        <td>
+                            <span class="{% matter_type_class matter=mn.matter %}">
+                                {{ mn.matter.get_matter_type_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span rel="tooltip" data-placement="bottom" data-html="true"
+                                  data-original-title="{{ mn.matter|matter_property_address:'html' }}">
+                                {{ mn.matter|matter_property_address:'html' }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if request|check_pv:'CLIENT_VIEW' %}
+                                {% for c in mn.matter.clients.all %}
+                                    <a href="{% url 'client_detail' client_id=c.pk %}">
+                                        {{ c.get_short_desc }}
+                                        {% if not forloop.last %}<br>{% endif %}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                {% for c in mn.matter.clients.all %}
+                                    {{ c.get_short_desc }}
+                                    {% if not forloop.last %}<br>{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                        <td class=" text-center">
+                            {{ mn.matter.stamp_duty_due_date|date:"Y/m/d" }}
+                        </td>
+                        <td class="text-right">
+                            {{ mn.matter.stamp_duty_amount|intcomma }}
+                        </td>
+                        <td class="text-center {% send_type_class send_type=mn.send_type %}">
+                            {{ mn.get_send_type_display }}
+                        </td>
+
+                        <td>{% mn_send_to_html mn=mn %}</td>
+                        <td>
+                            <span class="{% mn_status_bg_class mn=mn %}">
+                                {{ mn.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>

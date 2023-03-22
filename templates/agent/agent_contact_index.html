@@ -1,0 +1,68 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Agent Contact {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb 'Agent Contact' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Agent Contact
+        {% if request|check_pv:'MATTER_CREATE'%}
+            <span class="pull-right">
+                <a href="{% url 'agent_contact_create' %}" class="button button-flat-primary">
+                    <i class="fa fa-plus f11p" aria-hidden="true"></i> Create Agent Contact
+                </a>
+            </span>
+        {% endif %}
+    </h4>
+    <hr class="dash mt15">
+
+    <div class="row">
+        <div class="col-lg-2 col-md-3 col-sm-4">
+            <div class="input-icon-right">
+                <i class="glyphicon glyphicon-search"></i>
+                <input type="text" id="search-input" name="search_name" class="form-control" placeholder="Agent/Contact Name">
+            </div>
+        </div>
+    </div>
+
+    <div class="mt10 table-responsive">
+        <table class="table table-striped my-table" id="contact-table" width="100%"
+               data-server-url="{% url 'agent_contact_table_list' %}">
+            <thead>
+                <tr class="">
+                    <th class="unsearchable">ID</th>
+                    <th class="unsorted">Agent</th>
+                    <th class="unsorted">Contact</th>
+                    <th class="unsearchable unsorted">Email</th>
+                    <th class="unsearchable unsorted">Mobile</th>
+                    <th class="unsearchable unsorted text-center" width="80">Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+<script>
+
+$(function(){
+
+    JLib.init_data_table('#contact-table', true, 'search-input', 0);
+
+})
+</script>
+
+<script src="{{ STATIC_URL }}js/agent_contact_action.js?version=1.0.0"></script>
+
+{% endblock %}

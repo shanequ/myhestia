@@ -1,0 +1,147 @@
+<aside id="left-panel">
+
+    <!-- User info -->
+    <div class="login-info">
+        <span class="minifyme" data-action="minifyMenu" id="left-panel-arrow"> <i class="fa fa-arrow-circle-left hit"></i> </span>
+    </div>
+    <!-- end user info -->
+
+    <!-- NAVIGATION : This navigation is also responsive
+
+    To make this navigation dynamic please make sure to link the node
+    (the reference to the nav > ul) after page load. Or the navigation
+    will not initialize.
+    -->
+    <nav id="back-office-menu">
+        <!-- NOTE: Notice the gaps after each icon usage <i></i>..
+        Please note that these links work a bit different than
+        traditional href="" links. See documentation for details.
+        -->
+
+        <ul>
+            <li>
+                <a href="{% url 'home' %}">
+                    <i class="fa fa-lg fa-fw fa-home"></i> <span class="menu-item-parent">Dashboard</span>
+                </a>
+            </li>
+
+            {% if request|check_pv:'MATTER_VIEW' %}
+                <li>
+                    <a href="#">
+                        <i class="fa fa-lg fa-fw fa-building"></i> <span class="menu-item-parent">Project</span>
+                    </a>
+                    <ul>
+                        <li><a href="{% url 'project_index' %}">Project</a></li>
+
+                        {% if request|check_pv:'MATTER_CREATE'%}
+                            <li><a href="{% url 'project_create' %}">Create Project</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+            {% endif %}
+            {% if request|check_pv:'MATTER_VIEW' %}
+                <li>
+                    <a href="#">
+                        <i class="fa fa-lg fa-fw fa-suitcase"></i> <span class="menu-item-parent">Matter</span>
+                    </a>
+                    <ul>
+                        <li><a href="{% url 'matter_index' %}">Matter</a></li>
+
+                        {% if request|check_pv:'MATTER_CREATE'%}
+                            <li><a href="{% url 'matter_create' %}">Create Matter</a></li>
+                        {% endif %}
+
+
+                        {% if request|check_pv:'NOTIFICATION_VIEW' %}
+                            <li class="divider"></li>
+                            <li><a href="{% url 'matter_notification_index' %}">Matter Notification</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if request|check_pv:'CLIENT_VIEW' %}
+                <li>
+                    <a href="#">
+                        <i class="fa fa-lg fa-fw fa-user-circle"></i> <span class="menu-item-parent">Client</span>
+                    </a>
+                    <ul>
+                        <li><a href="{% url 'client_index' %}">Client</a></li>
+                        {% if request|check_pv:'CLIENT_CREATE'%}
+                            <li><a href="{% url 'client_create' %}">Create Client</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if request|check_pv:'MATTER_VIEW' %}
+                <li>
+                    <a href="#">
+                        <i class="fa fa-lg fa-fw fa-address-card-o"></i> <span class="menu-item-parent">Agent</span>
+                    </a>
+                    <ul>
+                        <li><a href="{% url 'agent_contact_index' %}">Agent Contact</a></li>
+                        {% if request|check_pv:'MATTER_CREATE'%}
+                            <li><a href="{% url 'agent_contact_create' %}">Create Agent Contact</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if request|check_pv:'STAFF_VIEW' or request|check_pv:'STAFF_TEAM_VIEW' %}
+                <li>
+                    <a href="#">
+                        <i class="fa fa-lg fa-fw fa-users"></i> <span class="menu-item-parent">Staff</span>
+                    </a>
+                    <ul>
+                        {% if request|check_pv:'STAFF_VIEW' %}
+                            <li><a href="{% url 'staff_index' %}">Staff</a></li>
+
+                            {% if request|check_pv:'STAFF_CREATE'%}
+                                <li><a href="{% url 'staff_create' %}">Create Staff</a></li>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if request|check_pv:'STAFF_TEAM_VIEW'%}
+                            {% if request|check_pv:'STAFF_VIEW' %}
+                                <li class="divider"></li>
+                            {% endif %}
+                            <li><a href="{% url 'staff_team_index' %}">Team</a></li>
+
+                            {% if request|check_pv:'STAFF_TEAM_CREATE'%}
+                                <li><a href="{% url 'staff_team_create' %}">Create Team</a></li>
+                            {% endif %}
+
+                        {% endif %}
+
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if request|check_pv:'NOTIFICATION_VIEW' %}
+                <li>
+                    <a href="#">
+                        <i class="fa fa-lg fa-fw fa-clipboard"></i> <span class="menu-item-parent">Template</span>
+                    </a>
+                    <ul>
+                        <li><a href="{% url 'n_template_index' %}">Notification Template</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if request|check_pv:'REPORT_VIEW' %}
+                <li>
+                    <a href="#">
+                        <i class="fa fa-lg fa-fw fa-calendar-check-o"></i> <span class="menu-item-parent">Bill</span>
+                    </a>
+                    <ul>
+                        <li><a href="{% url 'bill_index' %}">SMS/Email History</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+        </ul>
+
+    </nav>
+
+</aside>
+

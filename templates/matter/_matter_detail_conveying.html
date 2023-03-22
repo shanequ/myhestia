@@ -1,0 +1,100 @@
+{% load humanize %}
+    <div class="row detail-panel">
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>ID</dt>
+                <dd>{{ matter.get_id_desc }}</dd>
+                <dt>Matter Number</dt>
+                <dd>{{ matter.matter_num }}</dd>
+                <dt>Project</dt>
+                <dd>
+                    {% if matter.project %}
+                        <a href="{% url 'project_detail' project_id=matter.project.pk %}">
+                            {{ matter.project.title }}
+                        </a>
+                    {% endif %}
+                </dd>
+                <dt>Clients</dt>
+                <dd class="txt-color-green">
+                    {% matter_client_html matter=matter request=request %}
+                </dd>
+                <dt></dt><dd></dd>
+                <dt>Stamp Duty Amount</dt>
+                <dd>
+                    {% if matter.stamp_duty_amount != None %}
+                        {{ matter.stamp_duty_amount|intcomma }}
+                    {% endif %}
+                </dd>
+                <dt>Stamp Duty Due Date</dt>
+                <dd>{{ matter.stamp_duty_due_date|date:'d/m/Y' }}</dd>
+                <dt>Stamp Duty Paid Date</dt>
+                <dd>{{ matter.stamp_duty_paid_date|date:'d/m/Y' }}</dd>
+                <dt>Contract Exchange Date</dt>
+                <dd>{{ matter.contract_exchange_date|date:'d/m/Y' }}</dd>
+                <dt>Date to Advise Exchange</dt>
+                <dd>
+                    {% for d in matter.get_exchange_advice_date_times %}
+                        {{ d|date:'d/m/Y H:i' }}
+                        {% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                </dd>
+                <dt>Cooling Off Date</dt>
+                <dd>{{ matter.cooling_off_date|date:'d/m/Y' }}</dd>
+                <dt>Settlement Date</dt>
+                <dd>{{ matter.settlement_date|date:'d/m/Y' }}</dd>
+                <dt>Memo</dt>
+                <dd>
+                    {{ matter.memo|linebreaks }}
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>Status</dt>
+                <dd>
+                    <span class="{% matter_status_bg_class matter=matter %}">
+                        {{ matter.get_status_display }}
+                    </span>
+                </dd>
+                <dt>Matter Type</dt>
+                <dd>
+                    <span class="{% matter_type_class matter=matter %}">
+                        {{ matter.get_matter_type_display }}
+                    </span>
+                </dd>
+                <dt>Property Address</dt>
+                <dd>
+                    {{ matter|matter_property_address:'html' }}
+                </dd>
+                <dt>Agent Contact</dt>
+                <dd>
+                    {% if matter.agent_contact %}
+                        <address>
+                            <strong>{{ matter.agent_contact.agent.agent_name }}</strong> <br>
+                            {{ matter.agent_contact.contact_name }}<br>
+                            <abbr title="Mobile">M: </abbr>{{ matter.agent_contact.contact_mobile|insert_space_mobile }} <br>
+                            <abbr title="Email">E: </abbr>{{ matter.agent_contact.contact_email }}
+                        </address>
+                    {% endif %}
+                </dd>
+                <dt>Matter Close Date</dt>
+                <dd>{{ matter.matter_close_date|date:'d/m/Y' }}</dd>
+                <dt>Conveyancer</dt>
+                <dd>
+                    {% if matter.solicitor_name %}
+                        {{ matter.solicitor_name }} <br>
+                        {{ matter.solicitor_email }}, {{ matter.solicitor_mobile }}
+                    {% endif %}
+                </dd>
+                <dt>Matter Admin</dt>
+                <dd>
+                    {{ matter.matter_admin.get_short_desc }}
+                </dd>
+                <dt>Created By</dt>
+                <dd>
+                    {{ matter.created_by.get_short_desc }}<br>
+                    {{ matter.created_at|date:'d/m/Y H:i:s' }}
+                </dd>
+            </dl>
+        </div>
+    </div>

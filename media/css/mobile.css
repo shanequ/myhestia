@@ -1,0 +1,9 @@
+@media (max-width: 979px) {
+    .menu-on-top aside#left-panel nav {
+        height: 500px !important;
+    }
+
+    .menu-on-top #main {
+        margin-top: 0 !important;
+    }
+}

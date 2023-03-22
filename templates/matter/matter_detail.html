@@ -1,0 +1,92 @@
+{% extends 'mainbase.html' %}
+{% load humanize %}
+
+{% block title %} Matter Detail {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Matter' 'matter_index' %}
+    {% breadcrumb 'Matter Detail' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Matter Detail
+        <span class="pull-right">
+            {% matter_action_html matter=matter request=request html_type='btn' %}
+        </span>
+    </h4>
+    <hr class="dash mt15">
+
+    {% if matter.matter_type == matter.TYPE_OTHER %}
+        {% include 'matter/_matter_detail_other.html' with matter=matter %}
+    {% else %}
+        {% include 'matter/_matter_detail_conveying.html' with matter=matter %}
+    {% endif %}
+</div>
+
+<div class="jarviswidget plain-tab-panel mt20">
+    <header>
+        <ul class="nav nav-tabs pull-left in" id="tab-head">
+            <li class="active">
+                <a data-toggle="tab" href="#n"><span class="">Notifications</span></a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#doc"><span class="">Documents</span></a>
+            </li>
+        </ul>
+    </header>
+
+    <div class="widget-body">
+        <div class="tab-content padding-10">
+            <div class="tab-pane active" id="n">
+                {% include 'matter/_matter_notification_table.html' with mns=matter.mns.all %}
+            </div>
+            <div class="tab-pane" id="doc">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <dl class="dl-horizontal detail-panel">
+                            {% for type, data_dict in doc_dict.iteritems %}
+                                <dt class="mb0">{{ data_dict.display }}</dt>
+                                <dd class="row">
+                                    <div class="col-sm-4">
+                                        {% for doc in data_dict.data %}
+                                            <a href="{% url 'view_file' file_uuid=doc.global_file.uuid %}" download>
+                                                {{ data_dict.display }} ({{ forloop.counter }})
+                                            </a>
+                                            {% if not forloop.last %}<br> {% endif %}
+                                        {% endfor %}
+                                        {% if data_dict.data.0.notes != '' %}
+                                            <br>
+                                            <strong><i class="text-primary">Notes: {{ data_dict.data.0.notes }}</i></strong>
+                                        {% endif %}
+                                    </div>
+                                </dd>
+                            {% endfor %}
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    JLib.init_data_table('#mn-table', true, '', 1);
+})
+
+</script>
+
+<script src="{{ STATIC_URL }}js/matter_action.js?version=1.0.1"></script>
+<script src="{{ STATIC_URL }}js/matter_notification_action.js?version=1.0.0"></script>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Edit Team {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Team' 'staff_team_index' %}
+    {% breadcrumb 'Edit Team' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Edit Team
+        <i class="pull-right f11p mt5"><span class="txt-color-red">* </span>compulsory fields</i>
+    </h4>
+    <hr class="dash mt10">
+
+    <form action="{% url 'staff_team_edit' team_id=form.instance.pk %}" enctype="multipart/form-data" method="post" id='frm'>
+        {% csrf_token %}
+
+        <div class="form-group row">
+            <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                <label for="parent_team"><span class="txt-color-red">*</span> Parent Team</label>
+                <select class="select2" name="parent_team"
+                        data-bv-notempty="true"
+                        data-bv-notempty-message="* Please select a parent team">
+                    {% for team in form.business_teams %}
+                        <option value="{{ team.id }}"
+                                {% if form.parent_team.value|safe == team.id|safe %} selected {% endif %}>
+                            {{ team }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-4 col-md-6 col-sm-8 control-group">
+                <label for="team_name"><span class="txt-color-red">* </span>Team Name</label>
+                <input type="text" name="team_name" class="form-control"
+                       value="{{ form.team_name.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-notempty-message="* Please input Team Name"
+                       data-bv-stringlength="true" maxlength="128">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="button button-flat-primary" type="submit">
+                        Update Team
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    /**
+     * form validation
+     */
+    $('#frm').bootstrapValidator({
+        trigger: 'change keyup',
+        group: '.control-group'
+    });
+
+})
+
+</script>
+    
+
+{% endblock %}

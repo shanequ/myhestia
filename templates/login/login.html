@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-us" id="login-page">
+	<head>
+		<meta charset="utf-8">
+
+		<title>
+            {% block title %} Login - {{ WEBSITE_BU_NAME }} {% endblock %}
+        </title>
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<!-- Basic Styles -->
+        {% include 'partials/_css.html' %}
+
+        {% block style %}{% endblock %}
+
+	</head>
+
+	<body class="animated fadeInDown">
+		<div id="main" role="main">
+            <div id="content" class="container">
+                <div class="row mt60">
+                    <div class="col-xs-12 col-sm-3 col-md-2 col-lg-2"></div>
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+                        <div>
+                            <a class="" href="#">
+                                <img src="{{ WEBSITE_LOGO_URL }}" alt="{{ WEBSITE_BU_NAME }}" style="max-height: 70px;">
+                            </a>
+                        </div>
+
+                        <div class="well no-padding mt20">
+                            <form id="login-form" class="smart-form client-form">
+
+                                <fieldset>
+                                    <section>
+                                        <label class="label">Username</label>
+                                        <label class="input"> <i class="icon-append fa fa-user"></i>
+                                            <input type="text" name="username" id="username" autofocus>
+                                            <b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Please enter username</b></label>
+                                    </section>
+
+                                    <section>
+                                        <label class="label">Password</label>
+                                        <label class="input"> <i class="icon-append fa fa-lock"></i>
+                                            <input type="password" name="password" id="password">
+                                            <b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i> Enter your password</b> </label>
+                                        <label style="display: none;" class="state-error">
+                                        </label>
+                                        <em style="display: none;" class="invalid" id="error-message"></em>
+                                    </section>
+                                    <input type="hidden" id="next" name="next" value="{{ next|escape }}"/>
+                                </fieldset>
+                                <footer>
+                                    <button id="submit-button" class="button button-flat-primary">
+                                        <i id="loading" class="fa-spin fa fa-spinner fa-lg" style="display: none;"></i>&nbsp;
+                                        Sign in
+                                    </button>
+                                </footer>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+		<!--================================================== -->
+
+		<!-- PAGE FOOTER -->
+
+		<!-- END PAGE FOOTER -->
+
+		<!-- SHORTCUT AREA : With large tiles (activated via clicking user name tag)
+		Note: These tiles are completely responsive,
+		you can add as many as you like
+		-->
+
+		<!-- END SHORTCUT AREA -->
+
+		<!--================================================== -->
+        {% include 'partials/_js.html' %}
+
+		<script type="text/javascript">
+			runAllForms();
+
+			$(function() {
+				// Validation
+				$("#login-form").validate({
+					// Rules for form validation
+					rules : {
+						username : {
+							required : true
+						},
+						password : {
+							required : true,
+							minlength : 3
+						}
+					},
+
+					// Messages for form validation
+					messages : {
+						username : {
+							required : 'Please enter your username'
+						},
+						password : {
+							required : 'Please enter your password'
+						}
+					},
+
+					// Do not change code below
+					errorPlacement : function(error, element) {
+						error.insertAfter(element.parent());
+					},
+                    submitHandler: function(form) {
+                        $.ajax({
+                            type:"post",
+                            url:"{{ login_url }}",
+                            async:true,
+                            data:{username:$("#username").val(), password:$("#password").val(), next:$("#next").val(), csrfmiddlewaretoken:"{{csrf_token}}"},
+                            beforeSend: function() {
+                                $("#submit-button").addClass('disabled');
+                                $("#loading").show();
+                            },
+                            success:function(data) {
+                                console.log(data);
+                                var reg = /^\//;
+                                if (reg.test(data)) {
+                                    window.location.href=data;
+                                } else {
+                                    $("#login-box").addClass("has-error");
+                                    $("#error-message").html(data);
+                                    $("#error-message").show();
+                                }
+                            },
+                            timeout: 10000,
+                            error: function(XMLHttpRequest, textStatus, errorThrown){
+                                if (textStatus == 'timeout') {
+                                    $("#error-message").html("No response from server!");
+                                    $("#error-message").show();
+                                } else {
+                                    $("#error-message").html(textStatus);
+                                    $("#error-message").show();
+                                }
+                            },
+                            complete: function() {
+                                $("#submit-button").removeClass('disabled');
+                                $("#loading").hide();
+                            }
+                        });
+                    }
+				});
+			});
+		</script>
+
+
+	</body>
+</html>
+
+

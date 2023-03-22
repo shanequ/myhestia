@@ -1,0 +1,134 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Create Notification Template {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Notification Template' 'n_template_index' %}
+    {% breadcrumb 'Create Notification Template' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Create Notification Template
+        <i class="pull-right f11p mt5"><span class="txt-color-red">* </span>compulsory fields</i>
+    </h4>
+    <hr class="dash mt5">
+
+    <form action="{% url 'notice_template_create' %}" enctype="multipart/form-data" method="post" id='frm'>
+        {% csrf_token %}
+
+        <div class="form-group row">
+            <div class="col-sm-3 control-group">
+                <label for="template_name"><span class="txt-color-red">* </span>Template Name</label>
+                <input type="text" name="template_name" class="form-control"
+                       value="{{ form.template_name.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="64">
+            </div>
+            <div class="col-sm-3 control-group">
+                <label for="category"><span class="txt-color-red">* </span>Template Type</label>
+                <select type="text" name="category" class="form-control">
+                    {% for k, v in form.NTemplate.TYPES %}
+                        <option value="{{ k }}" {% if form.category.value == k %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-3 control-group">
+                <label for="trigger"><span class="txt-color-red">* </span>Trigger</label>
+                <select type="text" name="trigger" class="form-control">
+                    {% for k, v in form.NTemplate.TRIGGERS %}
+                        <option value="{{ k }}" {% if form.trigger.value == k %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-3 control-group">
+                <label for="trigger_days"><span class="txt-color-red">* </span>Trigger Leading Days</label>
+                <input type="text" name="trigger_days" class="form-control"
+                       value="{{ form.trigger_days.value | default:'0'}}"
+                       data-bv-notempty="true">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 control-group">
+                <label for="subject"><span class="txt-color-red">* </span>Subject</label>
+                <input type="text" name="subject" class="form-control"
+                       value="{{ form.subject.value | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="128">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2 control-group">
+                <label for="send_to"><span class="txt-color-red">* </span>Send To</label>
+                <select type="text" name="send_to" class="form-control">
+                    {% for k, v in form.NTemplate.SEND_TOS %}
+                        <option value="{{ k }}" {% if form.send_to.value == k %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-2 control-group">
+                <label class="checkbox-inline mt30">
+                    <input type="checkbox" name='cc_agent' class="check-group" {% if form.cc_agent.value %}checked{% endif %}>
+                    CC Agent
+                </label>
+            </div>
+            <div class="col-sm-2 control-group">
+                <label class="checkbox-inline mt30">
+                    <input type="checkbox" name='cc_staff' class="check-group" {% if form.cc_staff.value %}checked{% endif %}>
+                    CC Staff
+                </label>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <label for="content"><span class="txt-color-red">* </span>Content</label>
+                <textarea name='content' class="form-control" placeholder="" rows="4"
+                        >{{ form.content.value | default:''}}</textarea>
+            </div>
+        </div>
+
+
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="button button-flat-primary" type="submit">
+                        Create Template
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    /**
+     * form validation
+     */
+    $('#frm').bootstrapValidator({
+        trigger: 'change keyup',
+        group: '.control-group'
+    });
+
+})
+
+</script>
+
+
+{% endblock %}

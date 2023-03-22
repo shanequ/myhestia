@@ -1,0 +1,96 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Notification Template {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb 'Notification Template' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">Notification Template</h4>
+    <hr class="dash mt10">
+
+    <div class="row">
+        <div class="col-lg-2 col-md-3 col-sm-4 pr0">
+            <div class="input-icon-right">
+                <i class="glyphicon glyphicon-search"></i>
+                <input type="text" id="search-input" name="search" class="form-control" placeholder="Template Name">
+            </div>
+        </div>
+    </div>
+
+    <div class="mt10 table-responsive">
+        <table class="table table-striped my-table" id="n-template-table" width="100%">
+            <thead>
+                <tr class="">
+                    <th class="unsearchable">ID</th>
+                    <th class="">Name</th>
+                    <th class="unsearchable">Category</th>
+                    <th class="unsearchable">Trigger</th>
+                    <th class="unsearchable unsorted text-center">Type</th>
+                    <th class="unsearchable unsorted">Send To</th>
+                    <th class="unsearchable unsorted">Attachment</th>
+                    <th class="unsearchable unsorted">Status</th>
+                    <th class="unsearchable unsorted text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nt in templates %}
+                    <tr>
+                        <td>{{ nt.pk }}</td>
+                        <td>
+                            <a href="{% url 'n_template_detail' template_id=nt.pk %}">{{ nt.template_name }}</a>
+                        </td>
+                        <td>
+                            <span class="{% n_template_category_class nt=nt %}">
+                                {{ nt.get_category_display }}
+                            </span>
+                        </td>
+                        <td>{{ nt.get_trigger_desc }}</td>
+                        <td class="{% send_type_class send_type=nt.send_type %} text-center">
+                            {{ nt.get_send_type_display }}
+                        </td>
+                        <td>
+                            {% n_template_send_to_html nt=nt %}
+                        </td>
+                        <td class="">
+                            <span rel="tooltip" data-placement="bottom" data-html="true"
+                                  data-original-title="{{ nt.get_attachment_desc }}">
+                                {{ nt.get_attachment_desc|truncatechars:30 }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="{% n_template_status_bg_class nt=nt %}">
+                                {{ nt.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            {% n_template_action_html nt=nt request=request %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+<script>
+
+$(function(){
+
+    JLib.init_data_table('#n-template-table', true, 'search-input');
+
+})
+</script>
+
+<script src="{{ STATIC_URL }}js/n_template_action.js?version=1.0.0.0"></script>
+
+{% endblock %}

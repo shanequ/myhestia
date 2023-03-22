@@ -1,0 +1,115 @@
+{% extends 'mainbase.html' %}
+{% load humanize %}
+
+{% block title %} Client Detail {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Client' 'client_index' %}
+    {% breadcrumb 'Client Detail' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Client Detail
+        <span class="pull-right">
+            {% client_action_html client=client request=request html_type='btn' %}
+        </span>
+    </h4>
+    <hr class="dash mt15">
+
+    <div class="row detail-panel">
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>ID</dt>
+                <dd>{{ client.pk }}</dd>
+                <dt>Legal Name</dt>
+                <dd class="txt-color-green"><b>{{ client.get_legal_name }}</b></dd>
+                <dt>English Name</dt>
+                <dd class="txt-color-green">{{ client.en_nickname }}</dd>
+                <dt>Email</dt>
+                <dd>
+                    <a href="mailto: {{ client.email }}">{{ client.email }}</a>
+                </dd>
+                <dt>Mobile </dt>
+                <dd>{{ client.mobile|insert_space_mobile }}</dd>
+                <dt>Memo</dt>
+                <dd>
+                    {{ client.memo|linebreaks }}
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-6">
+            <dl class="dl-horizontal">
+                <dt>Status</dt>
+                <dd>
+                    <span class="{% client_status_bg_class client=client %}">
+                        {{ client.get_status_display }}
+                    </span>
+                </dd>
+                <dt>Date Of Birth</dt>
+                <dd>{{ client.dob|date:'d/m/Y' }}</dd>
+                <dt>Gender</dt>
+                <dd>
+                    <span class="{% get_gender_class gender=client.gender %}">
+                        {{ client.get_gender_display }}
+                    </span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+</div>
+
+<div class="jarviswidget plain-tab-panel mt20">
+    <header>
+        <ul class="nav nav-tabs pull-left in" id="tab-head">
+            <li class="active">
+                <a data-toggle="tab" href="#c-matter"><span class="">Conveying Matters</span></a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#o-matter"><span class="">Other Matters</span></a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#mn"><span class="">Matter Notifications</span></a>
+            </li>
+        </ul>
+    </header>
+
+    <div class="widget-body">
+        <div class="tab-content padding-10">
+            <div class="tab-pane active" id="c-matter">
+                {% include 'matter/_matter_table_conveying.html' with matters=client.get_conveying_matters %}
+            </div>
+            <div class="tab-pane" id="o-matter">
+                {% include 'matter/_matter_table_other.html' with matters=client.get_other_matters %}
+            </div>
+            <div class="tab-pane" id="mn">
+                {% include 'matter/_matter_notification_table.html' with mns=client.get_mns NConst=NConst %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    JLib.init_data_table('#conveying-matter-table', true, '');
+    JLib.init_data_table('#other-matter-table', true, '');
+
+    JLib.init_data_table('#mn-table', true, '', 1);
+})
+
+</script>
+
+<script src="{{ STATIC_URL }}js/client_action.js?version=1.0.0"></script>
+<script src="{{ STATIC_URL }}js/matter_action.js?version=1.0.1"></script>
+<script src="{{ STATIC_URL }}js/matter_notification_action.js?version=1.0.0"></script>
+{% endblock %}

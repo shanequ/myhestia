@@ -1,0 +1,71 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Update Client Memo {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Client' 'client_index' %}
+    {% breadcrumb 'Update Client Memo' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Update Client Memo
+        <i class="pull-right f11p mt5"><span class="txt-color-red">* </span>compulsory fields</i>
+    </h4>
+    <hr class="dash mt10">
+
+    <form action="{% url 'client_memo_change' client_id=form.instance.pk %}?next={{ next }}" enctype="multipart/form-data" method="post" id='frm' class="form-horizontal">
+        {% csrf_token %}
+
+        <div class="form-group mt30">
+            <label class="col-md-2 control-label pt0">Client</label>
+            <div class="col-md-10">
+                {{ form.instance }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Memo</label>
+            <div class="col-md-4 control-group">
+                <textarea name='memo' class="form-control mt10" rows="6"
+                          >{{ form.memo.value | default:''}}</textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="button button-flat-primary" type="submit">
+                        Update Memo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    /**
+     * form validation
+     */
+    $('#frm').bootstrapValidator({
+        trigger: 'change keyup',
+        group: '.control-group'
+    });
+
+})
+
+</script>
+
+
+{% endblock %}

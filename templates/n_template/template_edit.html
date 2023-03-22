@@ -1,0 +1,163 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Edit Template {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Notification Template' 'n_template_index' %}
+    {% breadcrumb 'Edit Template' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Edit Template
+        <i class="pull-right f11p mt5"><span class="txt-color-red">* </span>compulsory fields</i>
+    </h4>
+    <hr class="dash mt5">
+
+    <form action="{% url 'n_template_edit' template_id=form.instance.pk %}" enctype="multipart/form-data" method="post" id='frm'>
+        {% csrf_token %}
+
+        <div class="form-group row">
+            <div class="col-sm-6 control-group">
+                <label for=""><span class="txt-color-red">* </span>Template Name</label>
+                <input type="text" name="" class="form-control" readonly
+                       value="{{ form.instance.template_name | default:''}}"
+                       data-bv-notempty="true"
+                       data-bv-stringlength="true" maxlength="64">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-3 control-group">
+                <label for=""><span class="txt-color-red">* </span>Send Type</label>
+                <select name="" class="form-control" disabled>
+                    {% for k, v in form.NConst.SEND_TYPE_CHOICE %}
+                        <option value="{{ k }}" {% if form.instance.send_type == k %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-3 control-group">
+                <label for=""><span class="txt-color-red">* </span>Category</label>
+                <select name="" class="form-control" disabled>
+                    {% for k, v in form.NTemplate.CATEGORY_CHOICE %}
+                        <option value="{{ k }}" {% if form.instance.category == k %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-3 control-group">
+                <label><span class="txt-color-red">* </span>Trigger</label>
+                <select name="" class="form-control" disabled>
+                    {% for k, v in form.NTemplate.TRIGGER_CHOICE %}
+                        <option value="{{ k }}" {% if form.instance.trigger == k %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-3 control-group">
+                <label for=""><span class="txt-color-red">* </span>Trigger Days</label>
+                <input type="text" name="" class="form-control" readonly
+                       value="{{ form.instance.get_trigger_desc | default:''}}">
+            </div>
+        </div>
+
+        {% if form.instance.send_type == form.NConst.SEND_TYPE_EMAIL %}
+            <div class="form-group row">
+                <div class="col-sm-6 control-group">
+                    <label for="subject"><span class="txt-color-red">* </span>Subject</label>
+                    <input type="text" name="subject" class="form-control"
+                           value="{{ form.subject.value | default:''}}"
+                           data-bv-notempty="true"
+                           data-bv-stringlength="true" maxlength="128">
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="form-group row">
+            <div class="col-sm-6 control-group">
+                <label for="send_tos"><span class="txt-color-red">* </span>Send To</label>
+                <select multiple name="send_tos" class="select2" data-bv-notempty="true">
+                    {% for r in form.send_tos.field.choices.queryset %}
+                        <option value="{{ r.pk }}" {% if r.pk|safe in form.send_tos.value %}selected{% endif %}>
+                            {{ r.receiver }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        {% if form.instance.send_type == form.NConst.SEND_TYPE_EMAIL %}
+            <div class="form-group row">
+                <div class="col-sm-6 control-group">
+                    <label for="cc_tos">CC To</label>
+                    <select multiple name="cc_tos" class="select2">
+                        {% for r in form.cc_tos.field.choices.queryset %}
+                            <option value="{{ r.pk }}" {% if r.pk|safe in form.cc_tos.value %}selected{% endif %}>
+                                {{ r.receiver }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6 control-group">
+                    <label for="attachments">Attachments</label>
+                    <select multiple name="attachments" class="select2">
+                        {% for a in form.attachments.field.choices.queryset %}
+                            <option value="{{ a.pk }}" {% if a.pk|safe in form.attachments.value %}selected{% endif %}>
+                                {{ a.type_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <label for="content"><span class="txt-color-red">* </span>Content</label>
+                <textarea name='content' class="form-control {% if form.instance.send_type == form.NConst.SEND_TYPE_EMAIL %}my-summernote{% endif %}" placeholder="" rows="4"
+                        >{{ form.content.value | default:''}}</textarea>
+            </div>
+        </div>
+        
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="button button-flat-primary" type="submit">
+                        Update Template
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+{% endblock %}
+
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    /**
+     * form validation
+     */
+    $('#frm').bootstrapValidator({
+        trigger: 'change keyup',
+        group: '.control-group'
+    });
+
+})
+
+</script>
+
+
+{% endblock %}

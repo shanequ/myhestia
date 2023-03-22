@@ -1,0 +1,63 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Staff Team {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb 'Staff Team' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="plain-panel">
+    <h4 class="">
+        Staff Team
+
+        {% if request|check_pv:'STAFF_TEAM_CREATE' %}
+            <span class="pull-right">
+                <a href="{% url 'staff_team_create' %}" class="button button-flat-primary" role="button"><i class="fa fa-plus f11p" aria-hidden="true"></i> Create Team</a>
+            </span>
+        {% endif %}
+    </h4>
+    <hr class="dash mt15">
+
+    <div class="tree ml20">
+        {% make_team_tree request %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+<script>
+
+$(function(){
+
+    JLib.init_data_table('#content-table', true, 'search-input', 1);
+
+    /**
+     * delete team
+     */
+    $('#content-table,.tree').delegate(".delete-team-btn", "click", function(e) {
+
+        var data_url = $(this).attr('data-url');
+        if (data_url == '') {
+            return;
+        }
+
+        var title = 'Delete Team';
+        var confirm_msg = 'Are you sure to delete this team?';
+        var ok_msg = 'Team is deleted';
+
+        JLib.send_simple_ajax_action(data_url, title, confirm_msg, ok_msg, {});
+
+        e.preventDefault();
+	});
+
+})
+</script>
+
+
+{% endblock %}

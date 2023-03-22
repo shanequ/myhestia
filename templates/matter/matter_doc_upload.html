@@ -1,0 +1,109 @@
+{% extends 'mainbase.html' %}
+
+{% block title %} Upload Matter Document {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+    {% breadcrumb_url 'Matter' 'matter_index' %}
+    {% breadcrumb 'Upload Matter Document' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="alert alert-warning fade in">
+            <button class="close" data-dismiss="alert">×</button>
+            <i class="fa-fw fa fa-warning"></i>
+            <strong>Warning!</strong> Existing files will be replaced by uploaded files
+        </div>
+	</div>
+</div>
+
+
+<div class="plain-panel" id="file-upload-panel">
+    <h4 class="">
+        Upload Matter Document - {{ form.matter.get_id_desc }}
+    </h4>
+    <hr class="dash mt10">
+
+    <div id="file-type-container">
+        <div class="row mb50" id="file-upload-btn-panel">
+            {% for file_type, file_type_desc in form.MatterDocument.TYPE_CHOICE %}
+                <div class="well-sm text-center file-type-btn pull-left mt20 ml10 mr20 col-sm-1"
+                     data-type="{{ file_type }}"
+                     data-title="{{ file_type_desc }}">
+
+                    {% if file_type in form.doc_dict %}
+                        <em></em>
+                    {% endif %}
+                    <div class="mt10">{{ file_type_desc }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="dropzone-container" class="hide mt20 row">
+        <hr class="mt10 mb30">
+        <div class="col-sm-3">
+            <h3 class="mt0 f16p" id="field-title"></h3>
+            <h3 class="mt15 mb10 f12p">File Notes</h3>
+            <textarea id="file-notes" class="form-control" placeholder="" rows="8"></textarea>
+        </div>
+        <div class="col-sm-9">
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <button class="btn btn-primary" id="upload-btn">Start Upload</button>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-7">
+                    <div id="drop_zone" class="dropzone mt0 mb0" data-url="{% url "upload" %}" data-token="{{ csrf_token }}">
+                        <div class="dz-message needsclick f16p">
+                            Drop files here or click to upload
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id='real-frm' action="{% url 'matter_doc_upload' matter_id=form.matter.pk %}" method="post">
+        {% csrf_token %}
+
+        <input type="hidden" name="file_type" value="">
+
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-md-12 pull-left">
+                    <a class="button button-flat" href="{% url 'matter_detail' matter_id=form.matter.pk %}">
+                        Cancel
+                    </a>
+                    <button class="button button-flat-primary" type="submit">
+                        Submit Documents
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}
+
+
+{% block jscript %}
+<script>
+
+$(function() {
+    /**
+     * form validation
+     */
+    $('#real-frm').bootstrapValidator();
+
+});
+
+</script>
+
+<script src="{{ STATIC_URL }}js/matter_doc_upload.js"></script>
+
+{% endblock %}

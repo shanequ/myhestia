@@ -1,0 +1,64 @@
+{% extends 'mainbase.html' %}
+{% load humanize %}
+
+{% block title %} Dashboard {{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+    {% breadcrumb_url 'Home' 'home' %}
+{% endblock %}
+
+{% block content %}
+
+{% if request|check_pv:'REPORT_VIEW' %}
+    <section id="widget-grid" class="">
+        <div class="row mt10">
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <div class="jarviswidget " data-widget-colorbutton="false" data-widget-editbutton="false"
+                    data-widget-togglebutton="false" data-widget-deletebutton="false" data-widget-custombutton="false" data-widget-collapsed="false" data-widget-sortable="false">
+
+                    <header>
+                        <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                        <h2>Stamp Duty Due Notification - In 30 days</h2>
+                        <div class="widget-toolbar">
+                            <a aria-expanded="false" class="txt-color-blueDark" href="{% url 'report_stamp_duty_notification_download' %}">
+                                Download Excel
+                            </a>
+                        </div>
+                    </header>
+
+                    <div class="widget-body">
+                        {% include 'matter/_matter_notification_table_report.html' with mns=due_mns %}
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+{% endif %}
+
+{% if request|check_pv:'MATTER_VIEW' %}
+    <div class="plain-panel">
+        <h5 class="mt0">
+            My Settlement In 30 Days
+            <a href="{% url 'matter_index' %}" class="pull-right f12p">view all >></a>
+        </h5>
+        {% include 'matter/_matter_table_conveying.html' with matters=settle_matters %}
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block jscript %}
+
+<script>
+
+$(function(){
+    JLib.init_data_table('#conveying-matter-table', true, '');
+
+    JLib.init_data_table('#mn-table-report', true, '', 7);
+})
+
+</script>
+
+<script src="{{ STATIC_URL }}js/matter_action.js?version=1.0.1"></script>
+
+{% endblock %}
