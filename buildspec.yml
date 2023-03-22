@@ -16,5 +16,5 @@ phases:
 
   post_build:
     commands:
-      - echo "Post build: "
-      - echo "build succeeded."
+      - echo "build succeeded on `date`."
+
